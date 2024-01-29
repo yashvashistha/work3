@@ -1,0 +1,16 @@
+table tr {
+  /* background-color: rgba(234, 243, 255, 1); */
+  background-color: rgba(247, 131, 22, 0.229);
+  border-collapse: collapse;
+}
+
+table tr:nth-child(odd) {
+  background-color: white;
+}
+
+th,
+td {
+  border-collapse: collapse;
+  /* border: 1px solid rgba(138, 188, 255, 1); */
+  border: 1px solid rgb(237, 171, 109);
+}

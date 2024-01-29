@@ -1,0 +1,44 @@
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 10%;
+}
+
+.pagination div {
+  border: 1px solid rgba(247, 132, 22, 1);
+  background-color: rgba(247, 131, 22, 0.229);
+  /* border: 1px solid rgb(183, 183, 183);
+  background-color: rgba(240, 240, 240, 1);
+  color: rgb(139, 135, 135); */
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* .pagination div:first-child {
+  width: 61px;
+  height: 30px;
+} */
+
+.pagination div:nth-child(1) {
+  width: 76px;
+  height: 30px;
+}
+
+.pagination div:nth-child(2) {
+  width: 32px;
+  height: 32px;
+  background-color: white;
+  font-weight: 600;
+}
+.pagination div:nth-child(3) {
+  width: 51px;
+  height: 30px;
+}
+/* .pagination div:nth-child(5) {
+  width: 51px;
+  height: 30px;
+} */
