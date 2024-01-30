@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReadChat from "./ReadChat";
+import { Document, Page, pdfjs } from "react-pdf";
 
 function ChatPage() {
   const fileinputref = useRef(null);
@@ -62,10 +63,20 @@ function ChatPage() {
 }
 
 function Section2(data) {
-  const [filename, setFileName] = useState("PDF Viewer");
+  const [pdfFile, setPdfFile] = useState(null);
+  const [filename, setFileName] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
+  const [numPages, setNumPages] = useState();
+  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    console.log(numPages);
+    setNumPages(numPages);
+  };
+
   useEffect(() => {
     if (data.pdf) {
-      console.log(data.pdf.name);
+      setPdfFile(data.pdf);
       setFileName(data.pdf.name);
     }
   }, data.file);
@@ -79,7 +90,22 @@ function Section2(data) {
         flexDirection: "row",
       }}
     >
-      <div style={{ flex: 1, border: "1px solid lightgrey" }}>{filename}</div>
+      <div style={{ flex: 1, border: "1px solid lightgrey" }}>
+        <p>{filename}</p>
+        <div>
+          {pdfFile && (
+            <Document
+              file={pdfFile}
+              onLoadSuccess={onDocumentLoadSuccess}
+              style={{ overflow: "scroll" }}
+            >
+              {Array.from({ length: numPages }, (_, index) => (
+                <Page key={index + 1} pageNumber={index + 1} width={500} />
+              ))}
+            </Document>
+          )}
+        </div>
+      </div>
       <div
         style={{
           flex: 1,

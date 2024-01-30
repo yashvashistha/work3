@@ -3,8 +3,9 @@ import "../App.css";
 // import "./Table.css";
 import axios from "axios";
 import Pagination from "./Pagination";
-import "./Temptable.css";
+import "./Table.css";
 import ReadChat from "./ReadChat";
+import { format } from "date-fns";
 
 function HomePage() {
   return (
@@ -18,9 +19,10 @@ function HomePage() {
         gap: "2.5%",
       }}
     >
-      <div style={{ height: "min(125px, 25%)", width: "100%" }}>
+      {/* <div style={{ height: "min(125px, 25%)", width: "100%" }}>
         <ReadChat />
-      </div>
+      </div> */}
+      <div style={{ height: "10%", width: "100%" }}>{/* <ReadChat /> */}</div>
       <Upload />
       <Tablecontainer />
     </div>
@@ -30,9 +32,19 @@ function HomePage() {
 function Upload() {
   const fileinputref = useRef(null);
   const ddref = useRef(null);
+  const posturl =
+    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
   const innerhtml1 =
     '<p>Click to upload</p><p>Drag and Drop to upload</p><input type="file" style="display: none;">';
   const innerhtml2 = "<p></p>";
+  const [file, setFile] = useState(null);
+  const [selectedoption, setSelectedOption] = useState("BOE");
+
+  const selectchangehandle = (e) => {
+    const value = e.target.value;
+    setSelectedOption(value);
+  };
+
   const handleDragEnter = (e) => {
     e.preventDefault();
   };
@@ -57,6 +69,38 @@ function Upload() {
     console.log(file);
     ddref.current.innerHTML = innerhtml2;
     ddref.current.innerText = file.name;
+    setFile(file);
+  };
+  const uploadbtnhandle = async () => {
+    if (file === null) {
+      alert("Upload a File");
+      return;
+    }
+    if (file.type !== "application/pdf") {
+      alert("Only PDF Files are allowed");
+      return;
+    }
+
+    var config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf",
+      headers: {
+        "Content-Type": file.type,
+        "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+        filetype: selectedoption,
+        customerid: "1",
+      },
+      data: file,
+    };
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <div
@@ -109,7 +153,11 @@ function Upload() {
           ref={ddref}
         >
           <p style={{ width: "100%" }}>
-            <img src="Icons/uploadicon.png" /> Drag & Drop files in this or{" "}
+            <img
+              src="Icons/uploadicon.png"
+              style={{ position: "relative", top: "4px" }}
+            />{" "}
+            Drag & Drop files in this or{" "}
             <span
               onClick={openinputhandler}
               style={{ color: "rgba(247, 132, 22, 1)", cursor: "pointer" }}
@@ -126,6 +174,34 @@ function Upload() {
           />
           {/* Hidden file input to here  */}
         </div>
+        {/* select */}
+        <select
+          value={selectedoption}
+          onChange={selectchangehandle}
+          style={{ width: "12%", height: "40%" }}
+        >
+          <option value="BOE">Bill Of Entry</option>
+          <option value="SB">Shipping Bill</option>
+          <option value="CHKBOE">Checklist Bill Of Entry</option>
+          <option value="ADV">Advance License</option>
+          <option value="ADVNEW">Advance License New</option>
+          <option value="AC">Authorized Cetificate</option>
+          <option value="EPCG">EPCG License</option>
+          <option value="EPCGNEW">EPCG License</option>
+          <option value="BRC">Bank Realisation Certificate</option>
+          <option value="IT">Income Tax</option>
+          <option value="GSTR1">GSTR1</option>
+          <option value="GSTR1NEW">GSTR1 New</option>
+          <option value="GSTR3B">GSTR3B</option>
+          <option value="GSTR9">GSTR9</option>
+          <option value="GSTR9C">GSTR9c</option>
+          <option value="NOTICE">Notice</option>
+          <option value="SI">Sales Invoice</option>
+          <option value="CI">Commercial Invoice</option>
+          <option value="DD">Delivery Detail</option>
+          <option value="PI">Purchase Invoice</option>
+        </select>
+        {/* select */}
         <div
           style={{
             width: "min(153px, 30%)",
@@ -136,7 +212,9 @@ function Upload() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            cursor: "pointer",
           }}
+          onClick={uploadbtnhandle}
         >
           <p style={{ margin: "0px" }}>Upload</p>
         </div>
@@ -228,8 +306,16 @@ function Tablecontainer() {
           "Content-Type": "application/json",
         },
       });
-      setTableInfo(response.data.data);
+      // setTableInfo(response.data.data);
+      console.log(response.data.data);
       setRowLen(response.data.data.length);
+      const sortedData = response.data.data
+        .map((item) => ({
+          ...item,
+          Curr_date_time: new Date(item.Curr_date_time),
+        }))
+        .sort((a, b) => a.Curr_date_time - b.Curr_date_time);
+      setTableInfo(sortedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -238,7 +324,7 @@ function Tablecontainer() {
   const indexoflastrow = currentpage * rowperpage;
   const indexoffirstrow = indexoflastrow - rowperpage;
   const paginate = (pageNumber) => {
-    console.log(indexoffirstrow, indexoflastrow);
+    // console.log(indexoffirstrow, indexoflastrow);
     setCurrentPage(pageNumber);
   };
 
@@ -284,7 +370,7 @@ function Tablecontainer() {
             <th style={{ flex: 2 }}>Upload ID</th>
             <th style={{ flex: 4 }}>File Name</th>
             <th style={{ flex: 1 }}>File Type</th>
-            <th style={{ flex: 1 }}>Status</th>
+            <th style={{ flex: 1, minWidth: "8ch" }}>Status</th>
             <th style={{ flex: 2 }}>Loaded At</th>
             <th style={{ flex: 2 }}>Action</th>
           </thead>
@@ -314,6 +400,8 @@ function Tablecontainer() {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
+                      textWrap: "wrap",
+                      minWidth: "8ch",
                     }}
                   >
                     {d.Status || "Status"}
@@ -321,8 +409,12 @@ function Tablecontainer() {
                   <td style={{ flex: 2, textAlign: "center" }}>
                     {(
                       <div>
-                        <p>{`${d.Curr_date_time.split("T")[1].slice(0, 8)}`}</p>
-                        <p>{`${d.Curr_date_time.split("T")[0]}`}</p>{" "}
+                        <p>{`${d.Curr_date_time.toISOString()
+                          .split("T")[1]
+                          .slice(0, 8)}`}</p>
+                        <p>{`${
+                          d.Curr_date_time.toISOString().split("T")[0]
+                        }`}</p>{" "}
                       </div>
                     ) || "NULL"}
                   </td>
@@ -331,7 +423,6 @@ function Tablecontainer() {
                       style={{
                         alignSelf: "center",
                         display: "flex",
-                        // justifyContent: "space-evenly",
                         justifyContent: "center",
                         width: "100%",
                         gap: "15px",
@@ -396,6 +487,8 @@ function Tablecontainer() {
         postsPerPage={rowperpage}
         totalPosts={rowlen}
         currentpage={currentpage}
+        indexoffirstrow={indexoffirstrow}
+        indexoflastrow={indexoflastrow}
         paginate={paginate}
       />
     </div>

@@ -26,6 +26,36 @@ function Topbar() {
         style={{
           display: "flex",
           flexDirection: "row",
+          gap: "10px",
+          position: "relative",
+          right: "3ch",
+        }}
+      >
+        <img
+          src="Icons/adminicon.png"
+          alt="admin"
+          height="18px"
+          width="18px"
+        ></img>
+        <p
+          style={{
+            width: "40px",
+            height: "16px",
+            color: "white",
+            fontFamily: "arial",
+            fontWeight: "400",
+            fontSize: "14px",
+            lineHeight: "16px",
+          }}
+        >
+          Admin
+        </p>
+      </div>
+
+      {/* <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
           width: "110px",
           justifyContent: "space-between",
           // alignContent: "center",
@@ -68,7 +98,7 @@ function Topbar() {
             width="24px"
           ></img>
         </div>
-      </div>
+      </div> */}
     </div>
 
     // <div className="topbar">

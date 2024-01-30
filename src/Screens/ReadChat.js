@@ -19,7 +19,7 @@ function ReadChat() {
         width: "100%",
         boxSizing: "border-box",
         display: "flex",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "center",
         paddingLeft: "2%",
         gap: "5%",
@@ -27,7 +27,7 @@ function ReadChat() {
     >
       <Link
         to="/"
-        style={{ width: "min(200px, 40%)", height: "min(90px, 90%)" }}
+        style={{ width: "min(120px, 40%)", height: "min(60px, 90%)" }}
       >
         <div
           style={{
@@ -44,7 +44,7 @@ function ReadChat() {
 
       <Link
         to="/chat"
-        style={{ width: "min(200px, 40%)", height: "min(90px, 90%)" }}
+        style={{ width: "min(120px, 40%)", height: "min(60px, 90%)" }}
       >
         <div
           style={{
@@ -53,9 +53,6 @@ function ReadChat() {
             backgroundColor: "rgba(247, 132, 22, 1)",
             display: "flex",
             justifyContent: "center",
-          }}
-          onClick={() => {
-            setChat(!chat);
           }}
         >
           <img src="Icons/chaticon1.png" alt="Chat Icon" />
