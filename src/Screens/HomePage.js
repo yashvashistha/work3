@@ -5,9 +5,12 @@ import axios from "axios";
 import Pagination from "./Pagination";
 import "./Table.css";
 import ReadChat from "./ReadChat";
-import { format } from "date-fns";
 
 function HomePage() {
+  const [r, setR] = useState(0);
+  const reload = (rr) => {
+    setR(rr);
+  };
   return (
     <div
       style={{
@@ -23,13 +26,13 @@ function HomePage() {
         <ReadChat />
       </div> */}
       <div style={{ height: "10%", width: "100%" }}>{/* <ReadChat /> */}</div>
-      <Upload />
-      <Tablecontainer />
+      <Upload r={{ r, reload }} />
+      <Tablecontainer r={{ r, reload }} />
     </div>
   );
 }
 
-function Upload() {
+function Upload(props) {
   const fileinputref = useRef(null);
   const ddref = useRef(null);
   const posturl =
@@ -38,7 +41,8 @@ function Upload() {
     '<p>Click to upload</p><p>Drag and Drop to upload</p><input type="file" style="display: none;">';
   const innerhtml2 = "<p></p>";
   const [file, setFile] = useState(null);
-  const [selectedoption, setSelectedOption] = useState("BOE");
+  const [selectedoption, setSelectedOption] = useState("");
+  // const [reload, setReload] = useState(0);
 
   const selectchangehandle = (e) => {
     const value = e.target.value;
@@ -70,7 +74,14 @@ function Upload() {
     ddref.current.innerHTML = innerhtml2;
     ddref.current.innerText = file.name;
     setFile(file);
+    setSelectedOption(filetypehanlder(file.name)[1]);
   };
+
+  const filetypehanlder = (name) => {
+    const regex = /@([^@]+)@/;
+    return name.match(regex);
+  };
+
   const uploadbtnhandle = async () => {
     if (file === null) {
       alert("Upload a File");
@@ -96,7 +107,11 @@ function Upload() {
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        // console.log(JSON.stringify(response.data));
+        ddref.current.innerHTML = innerhtml1;
+        alert("PDF file Uploaded");
+        props.reload(props.r + 1);
+        // setReload(reload + 1);
       })
       .catch((error) => {
         console.log(error);
@@ -175,7 +190,7 @@ function Upload() {
           {/* Hidden file input to here  */}
         </div>
         {/* select */}
-        <select
+        {/* <select
           value={selectedoption}
           onChange={selectchangehandle}
           style={{ width: "12%", height: "40%" }}
@@ -200,7 +215,7 @@ function Upload() {
           <option value="CI">Commercial Invoice</option>
           <option value="DD">Delivery Detail</option>
           <option value="PI">Purchase Invoice</option>
-        </select>
+        </select> */}
         {/* select */}
         <div
           style={{
@@ -223,7 +238,7 @@ function Upload() {
   );
 }
 
-function Tablecontainer() {
+function Tablecontainer(props) {
   const actionicon = "Icons/table-action.png";
   const deleteicon = "Icons/trash.png";
   const tableapi =
@@ -233,10 +248,10 @@ function Tablecontainer() {
   const deletefileapi =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/delete_data?uniqueid=";
   const [tableinfo, setTableInfo] = useState(null);
-  const [reload, setReload] = useState(0);
   const [rowperpage] = useState(20);
   const [rowlen, setRowLen] = useState(1);
   const [currentpage, setCurrentPage] = useState(1);
+  const [rl, setRl] = useState(props.r);
 
   const deletehandler = async (id) => {
     const deletelink = deletefileapi + id;
@@ -247,21 +262,17 @@ function Tablecontainer() {
         },
       });
       console.log(response);
-      setReload(reload + 1);
+      // setReload(reload + 1);
+      // reload = reload + 1;
+      props.reload(props.r + 1);
     } catch (error) {
       console.error("Error deleting file:", error);
     }
   };
 
-  // "591ac92f-8b19-4331-a0a9-7ff94b059d6d" +
-
   const downloadhandler = async (data) => {
     const downloadlink =
-      filedownloadapi +
-      "uniqueid=" +
-      "591ac92f-8b19-4331-a0a9-7ff94b059d6d" +
-      "&type=" +
-      data.type;
+      filedownloadapi + "uniqueid=" + data.id + "&type=" + data.type;
     try {
       const response = await axios.get(downloadlink, {
         headers: {
@@ -314,7 +325,7 @@ function Tablecontainer() {
           ...item,
           Curr_date_time: new Date(item.Curr_date_time),
         }))
-        .sort((a, b) => a.Curr_date_time - b.Curr_date_time);
+        .sort((a, b) => b.Curr_date_time - a.Curr_date_time);
       setTableInfo(sortedData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -330,7 +341,7 @@ function Tablecontainer() {
 
   useEffect(() => {
     fetchdata();
-  }, [reload]);
+  }, [props.r]);
   return (
     <div
       style={{
