@@ -5,6 +5,7 @@ import axios from "axios";
 import Pagination from "./Pagination";
 import "./Table.css";
 import ReadChat from "./ReadChat";
+import { monthsToQuarters } from "date-fns";
 
 function HomePage() {
   const [reload, setReload] = useState(false);
@@ -31,7 +32,6 @@ function HomePage() {
 
 function Upload({ setReload, reload }) {
   const fileinputref = useRef(null);
-  const ddref = useRef(null);
   const posturl =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
   // const innerhtml1 = ddref.current.innerHTML;
@@ -39,12 +39,8 @@ function Upload({ setReload, reload }) {
   const [innerhtml, setInnerhtml] = useState();
   const [file, setFile] = useState(null);
   const [selectedoption, setSelectedOption] = useState("");
-  const btnref = useRef(null);
-
-  // const selectchangehandle = (e) => {
-  //   const value = e.target.value;
-  //   setSelectedOption(value);
-  // };
+  const [block, setBlock] = useState("block");
+  const pref = useRef(null);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -68,10 +64,8 @@ function Upload({ setReload, reload }) {
   };
   const uploadhandler = (file) => {
     console.log(file);
-    setInnerhtml(ddref.current.innerHTML);
-    console.log(ddref.current.innerHTML);
-    ddref.current.innerHTML = "<p></p>";
-    ddref.current.innerText = file.name;
+    pref.current.innerText = file.name;
+    setBlock("none");
     setFile(file);
     setSelectedOption(filetypehanlder(file.name)[1]);
   };
@@ -94,7 +88,7 @@ function Upload({ setReload, reload }) {
     var config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf",
+      url: posturl,
       headers: {
         "Content-Type": file.type,
         "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
@@ -106,9 +100,9 @@ function Upload({ setReload, reload }) {
     axios
       .request(config)
       .then((response) => {
-        // console.log(JSON.stringify(response.data));
-        // ddref.current.innerHTML = innerhtml1;
-        ddref.current.innerHTML = innerhtml;
+        pref.current.innerText = "";
+        setBlock("block");
+        console.log(innerhtml);
 
         // alert("PDF file Uploaded");
         setReload(!reload);
@@ -165,9 +159,9 @@ function Upload({ setReload, reload }) {
             justifyContent: "center",
             alignItems: "center",
           }}
-          ref={ddref}
         >
-          <p style={{ width: "100%" }}>
+          <p ref={pref}></p>
+          <p style={{ width: "100%", display: block }}>
             <img
               src="Icons/uploadicon.png"
               style={{ position: "relative", top: "4px" }}
@@ -175,8 +169,10 @@ function Upload({ setReload, reload }) {
             Drag & Drop files in this or{" "}
             <span
               onClick={openinputhandler}
-              style={{ color: "rgba(247, 132, 22, 1)", cursor: "pointer" }}
-              ref={btnref}
+              style={{
+                color: "rgba(247, 132, 22, 1)",
+                cursor: "pointer",
+              }}
             >
               Browse File
             </span>
