@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Pagination.css";
 
@@ -10,6 +10,8 @@ export default function Pagination({
   indexoflastrow,
   paginate,
 }) {
+  // const [inputblock, setInputBlock] = useState(false);
+  // const inputref = useRef(null);
   const checkfunc = (selectedpage) => {
     if (
       selectedpage >= 1 &&
@@ -46,9 +48,24 @@ export default function Pagination({
         <div
           onClick={() => {
             checkfunc(currentpage);
+            // setInputBlock(true);
+            // inputref.current.value = currentpage;
           }}
         >
           <span>{currentpage}</span>
+          {/* <input
+            type="text"
+            style={{
+              display: inputblock ? "block" : "none",
+              width: "100%",
+              height: "100%",
+              borderStyle: "none",
+              backgroundColor: "rgba(247, 132, 22, 1)",
+              color: "white",
+              fontweight: "600",
+              textAlign: "center",
+            }}
+          /> */}
         </div>
         <div
           onClick={() => {

@@ -84,6 +84,7 @@ function Upload({ setReload, reload }) {
       alert("Only PDF Files are allowed");
       return;
     }
+    console.log(selectedoption);
 
     var config = {
       method: "post",
@@ -102,7 +103,8 @@ function Upload({ setReload, reload }) {
       .then((response) => {
         pref.current.innerText = "";
         setBlock("block");
-        console.log(innerhtml);
+        // console.log(innerhtml);
+        console.log(response);
 
         // alert("PDF file Uploaded");
         setReload(!reload);
@@ -186,34 +188,6 @@ function Upload({ setReload, reload }) {
           onChange={hiddenuploadhandler}
         />
         {/* Hidden file input to here  */}
-        {/* select */}
-        {/* <select
-          value={selectedoption}
-          onChange={selectchangehandle}
-          style={{ width: "12%", height: "40%" }}
-        >
-          <option value="BOE">Bill Of Entry</option>
-          <option value="SB">Shipping Bill</option>
-          <option value="CHKBOE">Checklist Bill Of Entry</option>
-          <option value="ADV">Advance License</option>
-          <option value="ADVNEW">Advance License New</option>
-          <option value="AC">Authorized Cetificate</option>
-          <option value="EPCG">EPCG License</option>
-          <option value="EPCGNEW">EPCG License</option>
-          <option value="BRC">Bank Realisation Certificate</option>
-          <option value="IT">Income Tax</option>
-          <option value="GSTR1">GSTR1</option>
-          <option value="GSTR1NEW">GSTR1 New</option>
-          <option value="GSTR3B">GSTR3B</option>
-          <option value="GSTR9">GSTR9</option>
-          <option value="GSTR9C">GSTR9c</option>
-          <option value="NOTICE">Notice</option>
-          <option value="SI">Sales Invoice</option>
-          <option value="CI">Commercial Invoice</option>
-          <option value="DD">Delivery Detail</option>
-          <option value="PI">Purchase Invoice</option>
-        </select> */}
-        {/* select */}
         <div
           style={{
             width: "min(153px, 30%)",
@@ -319,8 +293,8 @@ function Tablecontainer({ setReload, reload }) {
           Curr_date_time: new Date(item.Curr_date_time),
         }))
         .sort((a, b) => b.Curr_date_time - a.Curr_date_time);
-      console.log(sortedData);
-      console.log(response.data.data);
+      // console.log(sortedData);
+      // console.log(response.data.data);
       setTableInfo(sortedData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -330,6 +304,7 @@ function Tablecontainer({ setReload, reload }) {
   const indexoflastrow = currentpage * rowperpage;
   const indexoffirstrow = indexoflastrow - rowperpage;
   const paginate = (pageNumber) => {
+    console.log(indexoffirstrow, indexoflastrow);
     setCurrentPage(pageNumber);
   };
 
@@ -386,7 +361,15 @@ function Tablecontainer({ setReload, reload }) {
                   <td style={{ flex: 2, textAlign: "center" }}>
                     {d.UniqueId || "ID"}
                   </td>
-                  <td style={{ flex: 4, textAlign: "center" }}>
+                  <td
+                    style={{
+                      flex: 4,
+                      textAlign: "center",
+                      // minWidth: "20%",
+                      // textWrap: "wrap",
+                      // minWidth: "10ch",
+                    }}
+                  >
                     {d.File_name || "NULL"}
                   </td>
                   <td
@@ -444,6 +427,7 @@ function Tablecontainer({ setReload, reload }) {
                           backgroundImage: " url(Icons/deleteicon.png)",
                           borderStyle: "none",
                           backgroundColor: "transparent",
+                          cursor: "pointer",
                         }}
                         onClick={() => {
                           deletehandler(d.UniqueId);
@@ -458,6 +442,7 @@ function Tablecontainer({ setReload, reload }) {
                           backgroundImage: " url(Icons/pdficon.png)",
                           borderStyle: "none",
                           backgroundColor: "transparent",
+                          cursor: "pointer",
                         }}
                         onClick={() => {
                           downloadhandler({
@@ -475,6 +460,7 @@ function Tablecontainer({ setReload, reload }) {
                           backgroundImage: " url(Icons/jsonicon.png)",
                           borderStyle: "none",
                           backgroundColor: "transparent",
+                          cursor: "pointer",
                         }}
                         onClick={() => {
                           downloadhandler({
