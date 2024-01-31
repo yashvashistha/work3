@@ -7,10 +7,7 @@ import "./Table.css";
 import ReadChat from "./ReadChat";
 
 function HomePage() {
-  const [r, setR] = useState(0);
-  const reload = (rr) => {
-    setR(rr);
-  };
+  const [reload, setReload] = useState(false);
   return (
     <div
       style={{
@@ -22,32 +19,32 @@ function HomePage() {
         gap: "2.5%",
       }}
     >
-      {/* <div style={{ height: "min(125px, 25%)", width: "100%" }}>
+      {/* <div style={{ height: "min(100px, 20%)", width: "100%" }}>
         <ReadChat />
       </div> */}
-      <div style={{ height: "10%", width: "100%" }}>{/* <ReadChat /> */}</div>
-      <Upload r={{ r, reload }} />
-      <Tablecontainer r={{ r, reload }} />
+      <div style={{ height: "5%", width: "100%" }}></div>
+      <Upload setReload={setReload} reload={reload} />
+      <Tablecontainer setReload={setReload} reload={reload} />
     </div>
   );
 }
 
-function Upload(props) {
+function Upload({ setReload, reload }) {
   const fileinputref = useRef(null);
   const ddref = useRef(null);
   const posturl =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
-  const innerhtml1 =
-    '<p>Click to upload</p><p>Drag and Drop to upload</p><input type="file" style="display: none;">';
-  const innerhtml2 = "<p></p>";
+  // const innerhtml1 = ddref.current.innerHTML;
+  // const innerhtml2 = "<p></p>";
+  const [innerhtml, setInnerhtml] = useState();
   const [file, setFile] = useState(null);
   const [selectedoption, setSelectedOption] = useState("");
-  // const [reload, setReload] = useState(0);
+  const btnref = useRef(null);
 
-  const selectchangehandle = (e) => {
-    const value = e.target.value;
-    setSelectedOption(value);
-  };
+  // const selectchangehandle = (e) => {
+  //   const value = e.target.value;
+  //   setSelectedOption(value);
+  // };
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -71,7 +68,9 @@ function Upload(props) {
   };
   const uploadhandler = (file) => {
     console.log(file);
-    ddref.current.innerHTML = innerhtml2;
+    setInnerhtml(ddref.current.innerHTML);
+    console.log(ddref.current.innerHTML);
+    ddref.current.innerHTML = "<p></p>";
     ddref.current.innerText = file.name;
     setFile(file);
     setSelectedOption(filetypehanlder(file.name)[1]);
@@ -108,10 +107,11 @@ function Upload(props) {
       .request(config)
       .then((response) => {
         // console.log(JSON.stringify(response.data));
-        ddref.current.innerHTML = innerhtml1;
-        alert("PDF file Uploaded");
-        props.reload(props.r + 1);
-        // setReload(reload + 1);
+        // ddref.current.innerHTML = innerhtml1;
+        ddref.current.innerHTML = innerhtml;
+
+        // alert("PDF file Uploaded");
+        setReload(!reload);
       })
       .catch((error) => {
         console.log(error);
@@ -176,19 +176,20 @@ function Upload(props) {
             <span
               onClick={openinputhandler}
               style={{ color: "rgba(247, 132, 22, 1)", cursor: "pointer" }}
+              ref={btnref}
             >
               Browse File
             </span>
           </p>
-          {/* Hidden file input from here */}
-          <input
-            type="file"
-            ref={fileinputref}
-            style={{ display: "none" }}
-            onChange={hiddenuploadhandler}
-          />
-          {/* Hidden file input to here  */}
         </div>
+        {/* Hidden file input from here */}
+        <input
+          type="file"
+          ref={fileinputref}
+          style={{ display: "none" }}
+          onChange={hiddenuploadhandler}
+        />
+        {/* Hidden file input to here  */}
         {/* select */}
         {/* <select
           value={selectedoption}
@@ -238,7 +239,7 @@ function Upload(props) {
   );
 }
 
-function Tablecontainer(props) {
+function Tablecontainer({ setReload, reload }) {
   const actionicon = "Icons/table-action.png";
   const deleteicon = "Icons/trash.png";
   const tableapi =
@@ -251,7 +252,6 @@ function Tablecontainer(props) {
   const [rowperpage] = useState(20);
   const [rowlen, setRowLen] = useState(1);
   const [currentpage, setCurrentPage] = useState(1);
-  const [rl, setRl] = useState(props.r);
 
   const deletehandler = async (id) => {
     const deletelink = deletefileapi + id;
@@ -262,12 +262,10 @@ function Tablecontainer(props) {
         },
       });
       console.log(response);
-      // setReload(reload + 1);
-      // reload = reload + 1;
-      props.reload(props.r + 1);
     } catch (error) {
       console.error("Error deleting file:", error);
     }
+    setReload(!reload);
   };
 
   const downloadhandler = async (data) => {
@@ -281,7 +279,7 @@ function Tablecontainer(props) {
         },
       });
 
-      console.log(response);
+      // console.log(response);
 
       let resultfile;
       if (data.type === "pdf") {
@@ -317,8 +315,7 @@ function Tablecontainer(props) {
           "Content-Type": "application/json",
         },
       });
-      // setTableInfo(response.data.data);
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setRowLen(response.data.data.length);
       const sortedData = response.data.data
         .map((item) => ({
@@ -326,6 +323,8 @@ function Tablecontainer(props) {
           Curr_date_time: new Date(item.Curr_date_time),
         }))
         .sort((a, b) => b.Curr_date_time - a.Curr_date_time);
+      console.log(sortedData);
+      console.log(response.data.data);
       setTableInfo(sortedData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -335,13 +334,12 @@ function Tablecontainer(props) {
   const indexoflastrow = currentpage * rowperpage;
   const indexoffirstrow = indexoflastrow - rowperpage;
   const paginate = (pageNumber) => {
-    // console.log(indexoffirstrow, indexoflastrow);
     setCurrentPage(pageNumber);
   };
 
   useEffect(() => {
     fetchdata();
-  }, [props.r]);
+  }, [reload]);
   return (
     <div
       style={{
@@ -420,12 +418,14 @@ function Tablecontainer(props) {
                   <td style={{ flex: 2, textAlign: "center" }}>
                     {(
                       <div>
-                        <p>{`${d.Curr_date_time.toISOString()
-                          .split("T")[1]
-                          .slice(0, 8)}`}</p>
-                        <p>{`${
-                          d.Curr_date_time.toISOString().split("T")[0]
-                        }`}</p>{" "}
+                        <p>{d.Curr_date_time.toString().slice(0, 15)}</p>
+                        <p>
+                          {d.Curr_date_time.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })}
+                        </p>
                       </div>
                     ) || "NULL"}
                   </td>

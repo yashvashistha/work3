@@ -1,0 +1,28 @@
+.readchat {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 2%;
+  gap: 5%;
+}
+
+.linkbtn {
+  width: min(120px, 40%);
+  height: min(60px, 90%);
+}
+
+@media (max-width: 720px) {
+  .readchat {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 490px) {
+  .linkbtn {
+    height: 50%;
+    width: 25%;
+  }
+}

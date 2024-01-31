@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import "./ReadChat.css";
 
 function ReadChat() {
   const [btnselect, setBtnSelect] = useState("read");
@@ -13,22 +14,8 @@ function ReadChat() {
   const [chat, setChat] = useState(true);
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        boxSizing: "border-box",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: "2%",
-        gap: "5%",
-      }}
-    >
-      <Link
-        to="/"
-        style={{ width: "min(120px, 40%)", height: "min(60px, 90%)" }}
-      >
+    <div className="readchat">
+      <Link className="linkbtn" to="/">
         <div
           style={{
             width: "100%",
@@ -42,10 +29,7 @@ function ReadChat() {
         </div>
       </Link>
 
-      <Link
-        to="/chat"
-        style={{ width: "min(120px, 40%)", height: "min(60px, 90%)" }}
-      >
+      <Link className="linkbtn" to="/chat">
         <div
           style={{
             width: "100%",

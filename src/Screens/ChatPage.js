@@ -7,7 +7,7 @@ function ChatPage() {
   const [file, setFile] = useState(null);
 
   const hiddenuploadhandler = async (e) => {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   };
   return (
@@ -24,7 +24,7 @@ function ChatPage() {
       <div
         style={{
           width: "100%",
-          height: "min(125px, 25%)",
+          height: "min(100px, 20%)",
           display: "flex",
           flexDirection: "row",
         }}
@@ -32,11 +32,11 @@ function ChatPage() {
         <ReadChat />
         <button
           style={{
-            width: "min(153px, 10%)",
+            width: "max(120px, 5%)",
             height: "min(38px, 5%)",
             position: "absolute",
-            top: "10%",
-            right: "15%",
+            top: "12%",
+            right: "12ch",
             // backgroundColor: "rgba(22, 120, 253, 1)",
             backgroundColor: "rgba(247, 131, 22)",
             borderStyle: "none",
