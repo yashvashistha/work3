@@ -1,29 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../App.css";
-// import "./Table.css";
 import axios from "axios";
 import Pagination from "./Pagination";
-import "./Table.css";
 import ReadChat from "./ReadChat";
-import { monthsToQuarters } from "date-fns";
 
 function HomePage() {
   const [reload, setReload] = useState(false);
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-        gap: "2.5%",
-      }}
-    >
-      {/* <div style={{ height: "min(100px, 20%)", width: "100%" }}>
+    <div className="Homepage">
+      <div style={{ height: "min(100px, 20%)", width: "100%" }}>
         <ReadChat />
-      </div> */}
-      <div style={{ height: "5%", width: "100%" }}></div>
+      </div>
+      {/* <div style={{ height: "5%", width: "100%" }}></div> */}
       <Upload setReload={setReload} reload={reload} />
       <Tablecontainer setReload={setReload} reload={reload} />
     </div>
@@ -34,22 +21,18 @@ function Upload({ setReload, reload }) {
   const fileinputref = useRef(null);
   const posturl =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
-  // const innerhtml1 = ddref.current.innerHTML;
-  // const innerhtml2 = "<p></p>";
-  const [innerhtml, setInnerhtml] = useState();
   const [file, setFile] = useState(null);
   const [selectedoption, setSelectedOption] = useState("");
   const [block, setBlock] = useState("block");
   const pref = useRef(null);
+  const uploadicon = "Icons/uploadicon.png";
 
   const handleDragEnter = (e) => {
     e.preventDefault();
   };
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = (e) => {
     e.preventDefault();
     uploadhandler(e.dataTransfer.files[0]);
@@ -84,7 +67,6 @@ function Upload({ setReload, reload }) {
       alert("Only PDF Files are allowed");
       return;
     }
-    console.log(selectedoption);
 
     var config = {
       method: "post",
@@ -103,10 +85,6 @@ function Upload({ setReload, reload }) {
       .then((response) => {
         pref.current.innerText = "";
         setBlock("block");
-        // console.log(innerhtml);
-        console.log(response);
-
-        // alert("PDF file Uploaded");
         setReload(!reload);
       })
       .catch((error) => {
@@ -114,58 +92,19 @@ function Upload({ setReload, reload }) {
       });
   };
   return (
-    <div
-      style={{
-        height: "min(124px, 25%)",
-        width: "min(1500px, 96%)",
-        // border: "1px solid red",
-        borderBottom: "1px solid black",
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <p
-        style={{
-          // border: "1px solid black",
-          height: "max(16px, 20%)",
-          margin: "0",
-          fontFamily: "Helvetica",
-          fontWeight: "700",
-          fontSize: "14px",
-          lineHeight: "16px",
-        }}
-      >
-        Upload File
-      </p>
-      <div
-        style={{
-          // border: "1px solid black",
-          height: "80%",
-          display: "flex",
-          alignItems: "center",
-          gap: "5%",
-        }}
-      >
+    <div className="Upload-Maindiv">
+      <p>Upload File</p>
+      <div className="Upload-Subdiv">
         <div
+          className="DragDrop"
           onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "40%",
-            height: "70%",
-            border: "1px dashed rgba(247, 132, 22, 1)",
-            textAlign: "center",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
         >
           <p ref={pref}></p>
           <p style={{ width: "100%", display: block }}>
             <img
-              src="Icons/uploadicon.png"
+              src={uploadicon}
               style={{ position: "relative", top: "4px" }}
             />{" "}
             Drag & Drop files in this or{" "}
@@ -188,21 +127,16 @@ function Upload({ setReload, reload }) {
           onChange={hiddenuploadhandler}
         />
         {/* Hidden file input to here  */}
-        <div
-          style={{
-            width: "min(153px, 30%)",
-            height: "min(38px, 40%)",
-            backgroundColor: "rgba(247, 132, 22, 1)",
-            textAlign: "center",
-            color: "white",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "pointer",
-          }}
-          onClick={uploadbtnhandle}
-        >
+        <div className="Upload-btn" onClick={uploadbtnhandle}>
           <p style={{ margin: "0px" }}>Upload</p>
+        </div>
+        <div
+          className="Upload-btn"
+          onClick={() => {
+            setReload(!reload);
+          }}
+        >
+          Refresh
         </div>
       </div>
     </div>
@@ -210,8 +144,9 @@ function Upload({ setReload, reload }) {
 }
 
 function Tablecontainer({ setReload, reload }) {
-  const actionicon = "Icons/table-action.png";
-  const deleteicon = "Icons/trash.png";
+  const deleteicon = "Icons/deleteicon.png";
+  const pdficon = "Icons/pdficon.png";
+  const jsonicon = "Icons/jsonicon.png";
   const tableapi =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/list_data";
   const filedownloadapi =
@@ -222,6 +157,7 @@ function Tablecontainer({ setReload, reload }) {
   const [rowperpage] = useState(20);
   const [rowlen, setRowLen] = useState(1);
   const [currentpage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const deletehandler = async (id) => {
     const deletelink = deletefileapi + id;
@@ -248,8 +184,6 @@ function Tablecontainer({ setReload, reload }) {
           "Content-Type": "application/" + data.type,
         },
       });
-
-      // console.log(response);
 
       let resultfile;
       if (data.type === "pdf") {
@@ -285,7 +219,6 @@ function Tablecontainer({ setReload, reload }) {
           "Content-Type": "application/json",
         },
       });
-      // console.log(response.data.data);
       setRowLen(response.data.data.length);
       const sortedData = response.data.data
         .map((item) => ({
@@ -293,8 +226,6 @@ function Tablecontainer({ setReload, reload }) {
           Curr_date_time: new Date(item.Curr_date_time),
         }))
         .sort((a, b) => b.Curr_date_time - a.Curr_date_time);
-      // console.log(sortedData);
-      // console.log(response.data.data);
       setTableInfo(sortedData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -309,44 +240,17 @@ function Tablecontainer({ setReload, reload }) {
   };
 
   useEffect(() => {
-    fetchdata();
+    setLoading(false);
+    setTimeout(() => {
+      fetchdata();
+      setLoading(true);
+    }, 2000);
   }, [reload]);
   return (
-    <div
-      style={{
-        height: "max(310px, 50%)",
-        width: "min(1500px, 96%)",
-        // border: "1px solid black",
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1%",
-      }}
-    >
-      <div
-        style={{
-          // overflow: "scroll",
-          overflowX: "auto",
-          overflowY: "scroll",
-          width: "100%",
-          height: "100%",
-          alignItems: "center",
-        }}
-      >
-        <table
-          style={{
-            width: "98%",
-            marginLeft: "1%",
-            borderCollapse: "collapse",
-          }}
-        >
-          <thead
-            style={{
-              color: "white",
-              display: "flex",
-              backgroundColor: "rgba(247, 132, 22, 1)",
-            }}
-          >
+    <div className="Table-Maindiv">
+      <div className="Table-div">
+        <table>
+          <thead>
             <th style={{ flex: 2 }}>Upload ID</th>
             <th style={{ flex: 4 }}>File Name</th>
             <th style={{ flex: 1 }}>File Type</th>
@@ -355,46 +259,14 @@ function Tablecontainer({ setReload, reload }) {
             <th style={{ flex: 2 }}>Action</th>
           </thead>
           <tbody>
-            {tableinfo &&
+            {loading && tableinfo ? (
               tableinfo.slice(indexoffirstrow, indexoflastrow).map((d) => (
-                <tr style={{ display: "flex" }}>
-                  <td style={{ flex: 2, textAlign: "center" }}>
-                    {d.UniqueId || "ID"}
-                  </td>
-                  <td
-                    style={{
-                      flex: 4,
-                      textAlign: "center",
-                      // minWidth: "20%",
-                      // textWrap: "wrap",
-                      // minWidth: "10ch",
-                    }}
-                  >
-                    {d.File_name || "NULL"}
-                  </td>
-                  <td
-                    style={{
-                      flex: 1,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {d.File_type || "--"}
-                  </td>
-                  <td
-                    style={{
-                      flex: 1,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      textWrap: "wrap",
-                      minWidth: "8ch",
-                    }}
-                  >
-                    {d.Status || "Status"}
-                  </td>
-                  <td style={{ flex: 2, textAlign: "center" }}>
+                <tr>
+                  <td>{d.UniqueId || "ID"}</td>
+                  <td>{d.File_name || "NULL"}</td>
+                  <td>{d.File_type || "--"}</td>
+                  <td>{d.Status || "Status"}</td>
+                  <td>
                     {(
                       <div>
                         <p>{d.Curr_date_time.toString().slice(0, 15)}</p>
@@ -408,26 +280,12 @@ function Tablecontainer({ setReload, reload }) {
                       </div>
                     ) || "NULL"}
                   </td>
-                  <td style={{ flex: 2, display: "flex" }}>
-                    <div
-                      style={{
-                        alignSelf: "center",
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        gap: "15px",
-                      }}
-                    >
+                  <td>
+                    <div>
                       <button
                         title="Delete"
                         style={{
-                          position: "relative",
-                          width: "17px",
-                          height: "18px",
-                          backgroundImage: " url(Icons/deleteicon.png)",
-                          borderStyle: "none",
-                          backgroundColor: "transparent",
-                          cursor: "pointer",
+                          backgroundImage: `url(${deleteicon})`,
                         }}
                         onClick={() => {
                           deletehandler(d.UniqueId);
@@ -436,13 +294,7 @@ function Tablecontainer({ setReload, reload }) {
                       <button
                         title="Download PDF"
                         style={{
-                          position: "relative",
-                          width: "17px",
-                          height: "18px",
-                          backgroundImage: " url(Icons/pdficon.png)",
-                          borderStyle: "none",
-                          backgroundColor: "transparent",
-                          cursor: "pointer",
+                          backgroundImage: `url(${pdficon})`,
                         }}
                         onClick={() => {
                           downloadhandler({
@@ -454,13 +306,7 @@ function Tablecontainer({ setReload, reload }) {
                       <button
                         title="Download JSON File"
                         style={{
-                          position: "relative",
-                          width: "19px",
-                          height: "20px",
-                          backgroundImage: " url(Icons/jsonicon.png)",
-                          borderStyle: "none",
-                          backgroundColor: "transparent",
-                          cursor: "pointer",
+                          backgroundImage: `url(${jsonicon})`,
                         }}
                         onClick={() => {
                           downloadhandler({
@@ -472,7 +318,10 @@ function Tablecontainer({ setReload, reload }) {
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))
+            ) : (
+              <p>Loading...</p>
+            )}
           </tbody>
         </table>
       </div>

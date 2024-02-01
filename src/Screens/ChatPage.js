@@ -5,50 +5,130 @@ import { Document, Page, pdfjs } from "react-pdf";
 function ChatPage() {
   const fileinputref = useRef(null);
   const [file, setFile] = useState(null);
+  const [tempfile, setTempFile] = useState(null);
+  const [block, setBlock] = useState(false);
+  const [pblock, setPBlock] = useState(false);
+  const pref = useRef(null);
+  const uploadicon = "Icons/uploadicon.png";
 
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    uploadhandler(e.dataTransfer.files[0]);
+  };
+  const openinputhandler = () => {
+    fileinputref.current.click();
+  };
+  const uploadhandler = (file) => {
+    setTempFile(file);
+    setPBlock("none");
+    pref.current.innerText = file.name;
+  };
   const hiddenuploadhandler = async (e) => {
-    // console.log(e.target.files[0]);
-    setFile(e.target.files[0]);
+    uploadhandler(e.target.files[0]);
+  };
+  const uploadbtnhandle = () => {
+    if (tempfile === null) {
+      alert("Upload a File");
+      return;
+    }
+    if (tempfile.type !== "application/pdf") {
+      alert("Only PDF Files are allowed");
+      return;
+    }
+    pref.current.innerText = "";
+    setBlock(!block);
+    setFile(tempfile);
   };
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-        // gap: "2.5%",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          height: "min(100px, 20%)",
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
+    <div className="Chatpage">
+      <div className="Section1">
         <ReadChat />
         <button
-          style={{
-            width: "max(120px, 5%)",
-            height: "min(38px, 5%)",
-            position: "absolute",
-            top: "12%",
-            right: "12ch",
-            // backgroundColor: "rgba(22, 120, 253, 1)",
-            backgroundColor: "rgba(247, 131, 22)",
-            borderStyle: "none",
-            color: "white",
-          }}
           onClick={() => {
-            fileinputref.current.click();
+            setBlock(!block);
+            // fileinputref.current.click();
           }}
         >
           Add New File
         </button>
         {/* Hidden file input from here */}
+        <div
+          className="popup-container"
+          style={{
+            display: block ? "flex" : "none",
+            flexDirection: "column",
+            // justifyContent: "space-around",
+            // alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              height: "max(40px, 20%)",
+              width: "100%",
+              backgroundColor: "rgba(247, 132, 22, 1)",
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <p
+              style={{
+                color: "white",
+                fontSize: "16px",
+                fontWeight: "700",
+                fontFamily: "Helvetica",
+                paddingLeft: "5px",
+              }}
+            >
+              Chat PDF
+            </p>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <div
+              className="DragDrop"
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              style={{ width: "60%" }}
+            >
+              <p ref={pref}></p>
+              <p style={{ width: "100%", display: pblock }}>
+                <img
+                  src={uploadicon}
+                  style={{ position: "relative", top: "4px" }}
+                />{" "}
+                Drag & Drop files in this or{" "}
+                <span
+                  onClick={openinputhandler}
+                  style={{
+                    color: "rgba(247, 132, 22, 1)",
+                    cursor: "pointer",
+                  }}
+                >
+                  Browse File
+                </span>
+              </p>
+            </div>
+            <div className="Upload-btn" onClick={uploadbtnhandle}>
+              <p style={{ margin: "0px" }}>Upload</p>
+            </div>
+          </div>
+        </div>
         <input
           type="file"
           ref={fileinputref}
@@ -62,10 +142,9 @@ function ChatPage() {
   );
 }
 
-function Section2(data) {
+function Section2({ pdf }) {
   const [pdfFile, setPdfFile] = useState(null);
-  const [filename, setFileName] = useState("");
-  const [pageNumber, setPageNumber] = useState(1);
+  const [filename, setFileName] = useState(null);
   const [numPages, setNumPages] = useState();
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -75,32 +154,51 @@ function Section2(data) {
   };
 
   useEffect(() => {
-    if (data.pdf) {
-      setPdfFile(data.pdf);
-      setFileName(data.pdf.name);
+    if (pdf) {
+      setPdfFile(pdf);
+      setFileName(pdf.name);
     }
-  }, data.file);
+    // console.log(reload);
+    console.log(pdf);
+  }, [pdf]);
   return (
     <div
       style={{
         width: "min(1290px, 90%)",
-        height: "min(737px, 75%)",
+        height: "min(737px, 80%)",
         border: "1px solid lightgrey",
         display: "flex",
         flexDirection: "row",
       }}
     >
-      <div style={{ flex: 1, border: "1px solid lightgrey" }}>
-        <p>{filename}</p>
-        <div>
+      <div
+        style={{
+          flex: 1,
+          border: "1px solid lightgrey",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "arial",
+            fontWeight: "500",
+            height: "20px",
+          }}
+        >
+          {filename ? (
+            <p>File Name: {filename.slice(0, -4)}</p>
+          ) : (
+            <p>No File Uploaded</p>
+          )}
+        </p>
+        <div style={{ overflowY: "auto", overflowX: "scroll", height: "95%" }}>
           {pdfFile && (
-            <Document
-              file={pdfFile}
-              onLoadSuccess={onDocumentLoadSuccess}
-              style={{ overflow: "scroll" }}
-            >
+            <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
               {Array.from({ length: numPages }, (_, index) => (
-                <Page key={index + 1} pageNumber={index + 1} width={500} />
+                <Page key={index + 1} pageNumber={index + 1} />
               ))}
             </Document>
           )}
@@ -116,11 +214,11 @@ function Section2(data) {
         }}
       >
         <p>Chat</p>
-        <div style={{ display: "flex", margin: "2%" }}>
-          <textarea style={{ flex: 7 }} placeholder="Ask any question.." />
+        <div style={{ display: "flex", margin: "2%", paddingLeft: "5%" }}>
+          <textarea style={{ width: "80%" }} placeholder="Ask any question.." />
           <button
             style={{
-              flex: 1,
+              width: "50px",
               borderRadius: "0px 15px 15px 0px",
               borderStyle: "none",
               background: "rgba(247, 131, 22)",
