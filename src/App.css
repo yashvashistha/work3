@@ -151,7 +151,7 @@ table tr td:nth-child(6) div {
 }
 table tr td:nth-child(6) div button {
   position: relative;
-  width: 17px;
+  width: 18px;
   height: 18px;
   border-style: none;
   background-color: transparent;
@@ -379,10 +379,12 @@ table tr td:nth-child(6) div button {
 
 .react-pdf__Page__textContent.textLayer {
   display: none;
+  width: 100%;
 }
 
 .react-pdf__Page__annotations.annotationLayer {
   display: none;
+  width: 100%;
 }
 
 .popup-container {

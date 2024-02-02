@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
 import ReadChat from "./ReadChat";
+import { setDate } from "date-fns";
 
 function HomePage() {
   const [reload, setReload] = useState(false);
@@ -130,14 +131,22 @@ function Upload({ setReload, reload }) {
         <div className="Upload-btn" onClick={uploadbtnhandle}>
           <p style={{ margin: "0px" }}>Upload</p>
         </div>
-        <div
+        {/* <div
           className="Upload-btn"
           onClick={() => {
             setReload(!reload);
           }}
         >
           Refresh
-        </div>
+        </div> */}
+        <img
+          src="Icons/refreshicon.png"
+          alt="Refresh"
+          style={{ cursor: "pointer", position: "absolute", right: "50px" }}
+          onClick={() => {
+            setReload(!reload);
+          }}
+        />
       </div>
     </div>
   );
@@ -147,6 +156,7 @@ function Tablecontainer({ setReload, reload }) {
   const deleteicon = "Icons/deleteicon.png";
   const pdficon = "Icons/pdficon.png";
   const jsonicon = "Icons/jsonicon.png";
+  const editicon = "Icons/editicon.png";
   const tableapi =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/list_data";
   const filedownloadapi =
@@ -282,6 +292,15 @@ function Tablecontainer({ setReload, reload }) {
                   </td>
                   <td>
                     <div>
+                      <button
+                        title="Edit"
+                        style={{
+                          backgroundImage: `url(${editicon})`,
+                        }}
+                        onClick={() => {
+                          // deletehandler(d.UniqueId);
+                        }}
+                      ></button>
                       <button
                         title="Delete"
                         style={{

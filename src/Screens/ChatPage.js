@@ -44,6 +44,7 @@ function ChatPage() {
     pref.current.innerText = "";
     setBlock(!block);
     setFile(tempfile);
+    setPBlock(!pblock);
   };
   return (
     <div className="Chatpage">
@@ -52,7 +53,6 @@ function ChatPage() {
         <button
           onClick={() => {
             setBlock(!block);
-            // fileinputref.current.click();
           }}
         >
           Add New File
@@ -63,8 +63,7 @@ function ChatPage() {
           style={{
             display: block ? "flex" : "none",
             flexDirection: "column",
-            // justifyContent: "space-around",
-            // alignItems: "center",
+            zIndex: "2",
           }}
         >
           <div
@@ -179,6 +178,7 @@ function Section2({ pdf }) {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
+          // overflow: "scroll",
         }}
       >
         <p
@@ -194,7 +194,14 @@ function Section2({ pdf }) {
             <p>No File Uploaded</p>
           )}
         </p>
-        <div style={{ overflowY: "auto", overflowX: "scroll", height: "95%" }}>
+        <div
+          style={{
+            overflowY: "auto",
+            overflowX: "auto",
+            height: "95%",
+            width: "100%",
+          }}
+        >
           {pdfFile && (
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
               {Array.from({ length: numPages }, (_, index) => (
@@ -211,11 +218,28 @@ function Section2({ pdf }) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <p>Chat</p>
-        <div style={{ display: "flex", margin: "2%", paddingLeft: "5%" }}>
-          <textarea style={{ width: "80%" }} placeholder="Ask any question.." />
+        <p style={{ alignSelf: "flex-start" }}>Chat</p>
+        <div
+          style={{
+            width: "80%",
+            display: "flex",
+            position: "relative",
+            bottom: "10px",
+            height: "25px",
+          }}
+        >
+          <input
+            style={{
+              width: "90%",
+              height: "25px",
+              boxSizing: "border-box",
+              border: "1px solid rgba(247, 132, 22, 1)",
+            }}
+            placeholder="Ask any question..."
+          />
           <button
             style={{
               width: "50px",
