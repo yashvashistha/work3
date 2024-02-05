@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
 import ReadChat from "./ReadChat";
-import { setDate } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
   const [reload, setReload] = useState(false);
@@ -153,6 +153,7 @@ function Upload({ setReload, reload }) {
 }
 
 function Tablecontainer({ setReload, reload }) {
+  const nav = useNavigate();
   const deleteicon = "Icons/deleteicon.png";
   const pdficon = "Icons/pdficon.png";
   const jsonicon = "Icons/jsonicon.png";
@@ -298,7 +299,7 @@ function Tablecontainer({ setReload, reload }) {
                           backgroundImage: `url(${editicon})`,
                         }}
                         onClick={() => {
-                          // deletehandler(d.UniqueId);
+                          nav(`/edit/${d.UniqueId}`);
                         }}
                       ></button>
                       <button
