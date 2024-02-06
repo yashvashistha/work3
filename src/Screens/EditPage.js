@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useParams } from "react-router-dom";
+import { JSONEditor } from "react-json-editor-viewer";
 
 function EditPage() {
   const { id } = useParams();
@@ -10,32 +11,28 @@ function EditPage() {
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/reupload_json";
   const uploadjsonhandle = async (jsoncontent) => {
     setClicked(!clicked);
-    // jsoncontent = JSON.parse(jsoncontent);
-    try {
-      jsoncontent = JSON.parse(jsoncontent);
-      const d = { uniqueid: id, data: jsoncontent.data };
-      var config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: reuploadapi,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: JSON.stringify(d),
-      };
-      axios
-        .request(config)
-        .then((response) => {
-          console.log(response);
-          alert("success");
-        })
-        .catch((error) => {
-          console.log(error);
-          alert("error");
-        });
-    } catch (error) {
-      alert("Wrong JSON Format");
-    }
+    console.log(typeof jsoncontent);
+    console.log(jsoncontent.data.data);
+    const d = { uniqueid: id, data: jsoncontent.data.data };
+    var config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: reuploadapi,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(d),
+    };
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(response);
+        alert("success");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("error");
+      });
   };
   return (
     <div className="Chatpage">
@@ -57,15 +54,13 @@ function Section2({ id, clicked, uploadjsonhandle }) {
   const [pdfFile, setPdfFile] = useState(null);
   const [jsonFile, setJsonFile] = useState(null);
   const [numPages, setNumPages] = useState();
-  const [error, setError] = useState(false);
   const [newjsonFile, setNewJsonFile] = useState(null);
-  const preref = useRef(null);
+  const [reload, setReload] = useState(true);
   const filedownloadapi =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/download_data?";
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
   const onDocumentLoadSuccess = ({ numPages }) => {
-    // console.log(numPages);
     setNumPages(numPages);
   };
 
@@ -95,65 +90,29 @@ function Section2({ id, clicked, uploadjsonhandle }) {
         const pdfurl = URL.createObjectURL(blob);
         setPdfFile(pdfurl);
       } else if (data.type === "json") {
-        // console.log(typeof JSON.parse(response));
-        resultfile = JSON.stringify(response.data.data, null, 2);
-        setJsonFile(resultfile);
-        setNewJsonFile(resultfile);
-        // console.log(response.data.data);
+        setJsonFile(response);
       }
     } catch (error) {
       console.error("Error downloading file:", error);
     }
   };
 
-  const jsonchangehandle = () => {
-    const jsoncontent = preref.current.innerHTML;
-    try {
-      JSON.parse(jsoncontent);
-      return true;
-      // const lines = jsoncontent.split("\n");
-      // lines.forEach((line, index) => {
-      //   lines[index] = `<span style="background-color: white;">${line}</span>`;
-      // });
-      // preref.current.innerHTML = lines.join("\n");
-    } catch (e) {
-      console.log(e.message);
-      const lines = jsoncontent.split("\n");
-      setError("Invalid JSON format");
-      const mat = e.message.match(/\(line (\d+) column (\d+)\)/);
-      alert(
-        `Wrong format in ${lines[parseInt(mat[1] - 2)]} at line ${parseInt(
-          mat[1] - 2
-        )}`
-      );
-      return false;
-
-      // lines.forEach((line, index) => {
-      //   lines[index] = `<span style="background-color: white;">${line}</span>`;
-      //   if (index === parseInt(mat[1] - 2)) {
-      //     console.log(line);
-      //     lines[
-      //       index
-      //     ] = `<span style="background-color: lightcoral;">${line}</span>`;
-      //   }
-      // });
-      // Set the innerHTML of the div with the modified lines
-      // preref.current.innerHTML = lines.join("\n");
-    }
+  const onJsonChange = (key, value, parent, data) => {
+    setNewJsonFile(data);
+    setJsonFile(data);
   };
 
   useEffect(() => {
-    if (id && !clicked) {
+    if (id && !clicked && reload) {
       downloadhandler({ id: id, type: "pdf" });
       downloadhandler({ id: id, type: "json" });
+      setReload(!reload);
     }
     if (clicked) {
-      if (jsonchangehandle()) {
-        uploadjsonhandle(preref.current.innerText);
-      }
-      // console.log(preref.current.innerText);
+      uploadjsonhandle(newjsonFile);
+      setReload(!reload);
     }
-  }, [id, clicked]);
+  }, [id, clicked, reload]);
 
   const [pdfwidth, setPdfWidth] = useState(620);
   return (
@@ -222,7 +181,6 @@ function Section2({ id, clicked, uploadjsonhandle }) {
           </div>
         </div>
         <div
-          // ref={containerRef}
           style={{
             overflowY: "scroll",
             overflowX: "auto",
@@ -261,65 +219,17 @@ function Section2({ id, clicked, uploadjsonhandle }) {
         </p>
 
         <div
-          contentEditable={true}
-          // onInput={jsonchangehandle}
-          // onBlur={jsonchangehandle}
           style={{
             height: "95%",
             width: "100%",
             overflowY: "scroll",
           }}
         >
-          {/* <JsonViewer data={JSON.parse(jsonFile)} ref={preref} /> */}
-          {jsonFile && (
-            <pre style={{ maxWidth: "100%", overflowX: "scroll" }} ref={preref}>
-              {jsonFile}
-            </pre>
-          )}
+          <JSONEditor collapsible data={jsonFile} onChange={onJsonChange} />
         </div>
       </div>
     </div>
   );
 }
-
-// const JsonViewer = ({ data }) => {
-//   const [expanded, setExpanded] = useState(false);
-//   const divref = useRef(null);
-//   const toggleExpand = () => {
-//     setExpanded(!expanded);
-//   };
-
-//   const renderValue = (value) => {
-//     if (typeof value === "object") {
-//       return <JsonViewer data={value} />;
-//     }
-//     return value;
-//   };
-
-//   const renderObject = (obj) => {
-//     return (
-//       <ul>
-//         {Object.entries(obj).map(([key, value]) => (
-//           <li key={key}>
-//             <strong>{key}:</strong> {renderValue(value)}
-//           </li>
-//         ))}
-//       </ul>
-//     );
-//   };
-
-//   // useEffect(() => {
-//   //   console.log(divref.current.innerText);
-//   // }, []);
-
-//   return (
-//     <div ref={divref}>
-//       <button onClick={toggleExpand} style={{ width: "15px", height: "20px" }}>
-//         {expanded ? "  -  " : "  +  "}
-//       </button>
-//       {expanded && typeof data === "object" && renderObject(data)}
-//     </div>
-//   );
-// };
 
 export default EditPage;
