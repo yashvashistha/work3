@@ -3,6 +3,7 @@ import axios from "axios";
 import Pagination from "./Pagination";
 import ReadChat from "./ReadChat";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 function HomePage() {
   const [reload, setReload] = useState(false);
@@ -19,11 +20,65 @@ function HomePage() {
 }
 
 function Upload({ setReload, reload }) {
+  const [selectedoption, setSelectedOption] = useState(null);
+  const options = [
+    { value: "BOE", label: "Bill Of Entry" },
+    { value: "SB", label: "Shipping Bill" },
+    { value: "CHKBOE", label: "Checklist Bill Of Entry" },
+    { value: "ADV", label: "Advance License" },
+    { value: "ADVNEW", label: "Advance License New" },
+    { value: "AC", label: "Authorized Cetificate" },
+    { value: "EPCG", label: "EPCG License" },
+    { value: "EPCGNEW", label: "EPCG License New" },
+    { value: "BRC", label: "Bank Realisation Certificate" },
+    { value: "IT", label: "Income Tax" },
+    { value: "GSTR1", label: "GSTR1" },
+    { value: "GSTR1NEW", label: "GSTR1 New" },
+    { value: "GSTR3B", label: "GSTR3B" },
+    { value: "GSTR9", label: "GSTR9" },
+    { value: "GSTR9C", label: "GSTR9c" },
+    { value: "NOTICE", label: "Notice" },
+    { value: "SI", label: "Sales Invoice" },
+    { value: "CI", label: "Commercial Invoice" },
+    { value: "DD", label: "Delivery Detail" },
+    { value: "PI", label: "Purchase Invoice" },
+  ];
+  const customStyles = {
+    // Example styles, you can customize them according to your needs
+    control: (provided, state) => ({
+      ...provided,
+      border: "1px solid orange",
+      boxShadow: state.isFocused ? "none" : "none",
+      "&:hover": {
+        border: "1px solid orange",
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      border: "1px solid #ccc", // Add a border to each option
+      color: state.isSelected ? "orange" : "black", // Change text color when selected
+      background: state.isFocused ? "#f0f0f0" : "white", // Change background color when focused
+    }),
+    indicatorSeparator: () => ({}), // Remove the default indicator separator
+    dropdownIndicator: (provided, state) => ({
+      ...provided,
+      transition: "transform 0.3s", // Add a transition for a smooth rotation effect
+      transform: state.menuIsOpen ? "rotate(180deg)" : "rotate(0deg)", // Rotate the arrow based on menu state
+    }),
+  };
+  const handleChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    console.log("Selected Method:", selectedOption);
+  };
+
   const fileinputref = useRef(null);
   const posturl =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
   const [file, setFile] = useState(null);
-  const [selectedoption, setSelectedOption] = useState("");
   const [block, setBlock] = useState("block");
   const pref = useRef(null);
   const uploadicon = "Icons/uploadicon.png";
@@ -51,12 +106,6 @@ function Upload({ setReload, reload }) {
     pref.current.innerText = file.name;
     setBlock("none");
     setFile(file);
-    setSelectedOption(filetypehanlder(file.name)[1]);
-  };
-
-  const filetypehanlder = (name) => {
-    const regex = /@([^@]+)@/;
-    return name.match(regex);
   };
 
   const uploadbtnhandle = async () => {
@@ -68,7 +117,6 @@ function Upload({ setReload, reload }) {
       alert("Only PDF Files are allowed");
       return;
     }
-
     var config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -76,7 +124,7 @@ function Upload({ setReload, reload }) {
       headers: {
         "Content-Type": file.type,
         "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-        filetype: selectedoption,
+        filetype: selectedoption.value,
         customerid: "1",
       },
       data: file,
@@ -87,6 +135,7 @@ function Upload({ setReload, reload }) {
         pref.current.innerText = "";
         setBlock("block");
         setReload(!reload);
+        setSelectedOption(null);
       })
       .catch((error) => {
         console.log(error);
@@ -96,6 +145,18 @@ function Upload({ setReload, reload }) {
     <div className="Upload-Maindiv">
       <p>Upload File</p>
       <div className="Upload-Subdiv">
+        <div style={{ width: "max(15%, 200px)", overflow: "visible" }}>
+          <Select
+            className="Upload-select"
+            options={options}
+            value={selectedoption}
+            onChange={handleChange}
+            placeholder={
+              selectedoption == null ? "Select Method" : selectedoption.label
+            }
+            styles={customStyles}
+          />
+        </div>
         <div
           className="DragDrop"
           onDragEnter={handleDragEnter}
@@ -128,25 +189,36 @@ function Upload({ setReload, reload }) {
           onChange={hiddenuploadhandler}
         />
         {/* Hidden file input to here  */}
+
         <div className="Upload-btn" onClick={uploadbtnhandle}>
           <p style={{ margin: "0px" }}>Upload</p>
         </div>
-        {/* <div
-          className="Upload-btn"
-          onClick={() => {
-            setReload(!reload);
+        <div
+          style={{
+            width: "15%",
+            display: "flex",
+            justifyContent: "flex-end",
           }}
         >
-          Refresh
-        </div> */}
-        <img
+          <img
+            src="Icons/refreshicon.png"
+            alt="Refresh"
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setReload(!reload);
+            }}
+          />
+        </div>
+        {/* <img
           src="Icons/refreshicon.png"
           alt="Refresh"
           style={{ cursor: "pointer", position: "absolute", right: "50px" }}
           onClick={() => {
             setReload(!reload);
           }}
-        />
+        /> */}
       </div>
     </div>
   );

@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { JSONEditor } from "react-json-editor-viewer";
 
 function EditPage() {
+  const nav = useNavigate();
   const { id } = useParams();
   const [clicked, setClicked] = useState(false);
+  const [dis, setDis] = useState("view");
   const reuploadapi =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/reupload_json";
   const uploadjsonhandle = async (jsoncontent) => {
@@ -26,8 +28,9 @@ function EditPage() {
     axios
       .request(config)
       .then((response) => {
-        console.log(response);
-        alert("success");
+        // nav("/");
+        setDis("view");
+        // alert("done");
       })
       .catch((error) => {
         console.log(error);
@@ -36,21 +39,139 @@ function EditPage() {
   };
   return (
     <div className="Chatpage">
-      <Section2 id={id} clicked={clicked} uploadjsonhandle={uploadjsonhandle} />
-      <button
-        className="Upload-btn"
-        style={{ borderStyle: "none", marginTop: "1%" }}
-        onClick={() => {
-          setClicked(!clicked);
+      <Section2
+        id={id}
+        clicked={clicked}
+        uploadjsonhandle={uploadjsonhandle}
+        dis={dis}
+      />
+      <div
+        style={{
+          width: "min(1290px, 90%)",
+          height: "min(38px, 40%)",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          gap: "3%",
+          marginTop: "1%",
         }}
       >
-        Save JSON
-      </button>
+        <button
+          className="Upload-btn"
+          style={{
+            borderStyle: "none",
+            height: "100%",
+            display: dis == "view" ? "none" : "block",
+          }}
+          onClick={() => {
+            setClicked(!clicked);
+            setDis("view");
+          }}
+        >
+          Save JSON
+        </button>
+        <button
+          className="Upload-btn"
+          style={{
+            borderStyle: "none",
+            height: "100%",
+            display: dis == "edit" ? "none" : "block",
+          }}
+          onClick={() => {
+            setDis("edit");
+          }}
+        >
+          Edit JSON
+        </button>
+        <button
+          className="Upload-btn"
+          style={{ borderStyle: "none", height: "100%" }}
+          onClick={() => {
+            nav("/");
+          }}
+        >
+          Cancel JSON
+        </button>
+      </div>
     </div>
   );
 }
 
-function Section2({ id, clicked, uploadjsonhandle }) {
+function Section2({ id, clicked, uploadjsonhandle, dis }) {
+  const styles = {
+    dualView: {
+      display: "flex",
+    },
+    jsonViewer: {
+      width: "100%",
+      fontSize: 12,
+      fontFamily: "Lucida Console, monospace",
+      lineHeight: 1.25,
+      display: dis === "view" ? "block" : "none",
+    },
+    jsonEditor: {
+      width: "100%",
+      fontSize: 12,
+      fontFamily: "Lucida Console, monospace",
+      lineHeight: 1.25,
+      display: dis === "edit" ? "block" : "none",
+    },
+    root: {
+      fontSize: 12,
+      fontFamily: "Lucida Console, monospace",
+      lineHeight: 1.25,
+      color: "#3E3D32",
+    },
+    label: {
+      color: "#000080",
+      marginTop: 3,
+    },
+    value: {
+      width: "50%",
+      marginLeft: 20,
+      border: "1px solid grey",
+    },
+    row: {
+      display: "flex",
+    },
+    input: {
+      padding: 2,
+      fontFamily: "Lucida Console, monospace",
+      fontSize: 12,
+      borderStyle: "none",
+      backgroundColor: "white",
+      color: "black",
+      width: "200%",
+    },
+    select: {
+      backgroundColor: "white",
+      color: "	#800000",
+      borderStyle: "none",
+    },
+    addButton: {
+      display: "none",
+    },
+    removeButton: {
+      display: "none",
+    },
+    text: {
+      color: "black",
+      fontSize: 12,
+    },
+    number: {
+      color: "purple",
+      fontSize: 12,
+    },
+    property: {
+      color: "DeepPink",
+      fontSize: 12,
+    },
+    collapseIcon: {
+      cursor: "pointer",
+      fontSize: 10,
+      color: "#000435",
+    },
+  };
   const [pdfFile, setPdfFile] = useState(null);
   const [jsonFile, setJsonFile] = useState(null);
   const [numPages, setNumPages] = useState();
@@ -91,6 +212,7 @@ function Section2({ id, clicked, uploadjsonhandle }) {
         setPdfFile(pdfurl);
       } else if (data.type === "json") {
         setJsonFile(response);
+        setNewJsonFile(response);
       }
     } catch (error) {
       console.error("Error downloading file:", error);
@@ -98,8 +220,9 @@ function Section2({ id, clicked, uploadjsonhandle }) {
   };
 
   const onJsonChange = (key, value, parent, data) => {
-    setNewJsonFile(data);
-    setJsonFile(data);
+    jsonFile.data.data = data;
+    setNewJsonFile(jsonFile);
+    setJsonFile(jsonFile);
   };
 
   useEffect(() => {
@@ -131,7 +254,7 @@ function Section2({ id, clicked, uploadjsonhandle }) {
           flex: 1,
           border: "1px solid lightgrey",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           alignItems: "center",
           flexDirection: "column",
         }}
@@ -142,6 +265,7 @@ function Section2({ id, clicked, uploadjsonhandle }) {
             flexDirection: "row",
             justifyContent: "space-between",
             width: "90%",
+            height: "5%",
           }}
         >
           <p
@@ -150,20 +274,23 @@ function Section2({ id, clicked, uploadjsonhandle }) {
               fontFamily: "arial",
               fontWeight: "600",
               height: "20px",
+              display: "flex",
+              alignItems: "center",
+              height: "100%",
             }}
           >
             PDF File
           </p>
           <div
             style={{
-              width: "10%",
+              width: "15%",
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
             }}
           >
             <button
-              style={{ width: "20px" }}
+              style={{ width: "30px" }}
               onClick={() => {
                 setPdfWidth(pdfwidth + 20);
               }}
@@ -171,7 +298,7 @@ function Section2({ id, clicked, uploadjsonhandle }) {
               +{/* <img src="Icons/zoominicon.png" /> */}
             </button>
             <button
-              style={{ width: "20px" }}
+              style={{ width: "30px" }}
               onClick={() => {
                 setPdfWidth(pdfwidth - 20);
               }}
@@ -186,6 +313,8 @@ function Section2({ id, clicked, uploadjsonhandle }) {
             overflowX: "auto",
             height: "95%",
             width: "100%",
+            border: "1px solid grey",
+            boxSizing: "content-box",
           }}
         >
           {pdfFile && (
@@ -202,30 +331,60 @@ function Section2({ id, clicked, uploadjsonhandle }) {
           flex: 1,
           border: "1px solid lightgrey",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           alignItems: "center",
           flexDirection: "column",
         }}
       >
-        <p
+        <div
           style={{
-            alignSelf: "flex-start",
-            fontFamily: "arial",
-            fontWeight: "600",
-            height: "20px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+            height: "5%",
           }}
         >
-          JSON
-        </p>
+          <p
+            style={{
+              alignSelf: "flex-start",
+              fontFamily: "arial",
+              fontWeight: "600",
+              height: "100%",
+              marginLeft: "10px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            JSON
+          </p>
+          <div
+            style={{
+              width: "90%",
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          ></div>
+        </div>
 
         <div
           style={{
             height: "95%",
             width: "100%",
             overflowY: "scroll",
+            border: "1px solid grey",
+            boxSizing: "content-box",
           }}
         >
-          <JSONEditor collapsible data={jsonFile} onChange={onJsonChange} />
+          {jsonFile && (
+            <JSONEditor
+              collapsible
+              data={jsonFile.data.data}
+              onChange={onJsonChange}
+              styles={styles}
+              view="dual"
+            />
+          )}
         </div>
       </div>
     </div>

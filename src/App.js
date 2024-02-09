@@ -5,7 +5,6 @@ import HomePage from "./Screens/HomePage";
 import ChatPage from "./Screens/ChatPage";
 import "./App.css";
 import EditPage from "./Screens/EditPage";
-import TempPage from "./Screens/TempPage";
 
 function App() {
   return (
@@ -14,7 +13,6 @@ function App() {
         <div className="ScreenContainer">
           <Topbar />
           <Routes>
-            {/* <Route path="/" exact element={<TempPage />} /> */}
             <Route path="/" exact element={<HomePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/edit/:id" element={<EditPage />} />
