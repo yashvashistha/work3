@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
-import ReadChat from "./ReadChat";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import ReadChat1 from "./ReadChat1";
 
 function HomePage() {
   const [reload, setReload] = useState(false);
   return (
     <div className="Homepage">
       <div style={{ height: "min(100px, 20%)", width: "100%" }}>
-        <ReadChat />
+        <ReadChat1 />
       </div>
       {/* <div style={{ height: "5%", width: "100%" }}></div> */}
       <Upload setReload={setReload} reload={reload} />
@@ -20,6 +20,7 @@ function HomePage() {
 }
 
 function Upload({ setReload, reload }) {
+  const [rotation, setRotation] = useState(0);
   const [selectedoption, setSelectedOption] = useState(null);
   const options = [
     { value: "BOE", label: "Bill Of Entry" },
@@ -82,6 +83,10 @@ function Upload({ setReload, reload }) {
   const [block, setBlock] = useState("block");
   const pref = useRef(null);
   const uploadicon = "Icons/uploadicon.png";
+
+  const rotateImage = () => {
+    setRotation(rotation + 360);
+  };
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -204,21 +209,16 @@ function Upload({ setReload, reload }) {
             src="Icons/refreshicon.png"
             alt="Refresh"
             style={{
+              transform: `rotate(${rotation}deg)`,
+              transition: "transform 2s ease",
               cursor: "pointer",
             }}
             onClick={() => {
               setReload(!reload);
+              rotateImage();
             }}
           />
         </div>
-        {/* <img
-          src="Icons/refreshicon.png"
-          alt="Refresh"
-          style={{ cursor: "pointer", position: "absolute", right: "50px" }}
-          onClick={() => {
-            setReload(!reload);
-          }}
-        /> */}
       </div>
     </div>
   );

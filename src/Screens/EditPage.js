@@ -177,6 +177,8 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
   const [numPages, setNumPages] = useState();
   const [newjsonFile, setNewJsonFile] = useState(null);
   const [reload, setReload] = useState(true);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const filedownloadapi =
     "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/download_data?";
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -210,9 +212,11 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
         });
         const pdfurl = URL.createObjectURL(blob);
         setPdfFile(pdfurl);
+        setLoading1(true);
       } else if (data.type === "json") {
         setJsonFile(response);
         setNewJsonFile(response);
+        setLoading2(true);
       }
     } catch (error) {
       console.error("Error downloading file:", error);
@@ -317,12 +321,14 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
             boxSizing: "content-box",
           }}
         >
-          {pdfFile && (
+          {loading1 && pdfFile ? (
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
               {Array.from({ length: numPages }, (_, index) => (
                 <Page key={index + 1} pageNumber={index + 1} width={pdfwidth} />
               ))}
             </Document>
+          ) : (
+            <div>Loading...</div>
           )}
         </div>
       </div>
@@ -376,7 +382,7 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
             boxSizing: "content-box",
           }}
         >
-          {jsonFile && (
+          {loading2 && jsonFile ? (
             <JSONEditor
               collapsible
               data={jsonFile.data.data}
@@ -384,6 +390,8 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
               styles={styles}
               view="dual"
             />
+          ) : (
+            <div>Loading...</div>
           )}
         </div>
       </div>

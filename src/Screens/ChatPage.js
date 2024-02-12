@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import ReadChat from "./ReadChat";
 import { Document, Page, pdfjs } from "react-pdf";
+import ReadChat2 from "./ReadChat2";
 
 function ChatPage() {
   const fileinputref = useRef(null);
@@ -49,14 +49,24 @@ function ChatPage() {
   return (
     <div className="Chatpage">
       <div className="Section1">
-        <ReadChat />
-        <button
-          onClick={() => {
-            setBlock(!block);
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          Add New File
-        </button>
+          <ReadChat2 />
+          <button
+            className="addnewbtn"
+            onClick={() => {
+              setBlock(!block);
+            }}
+          >
+            Add New File
+          </button>
+        </div>
         {/* Hidden file input from here */}
         <div
           className="popup-container"
@@ -158,7 +168,7 @@ function Section2({ pdf }) {
       setFileName(pdf.name);
     }
     // console.log(reload);
-    console.log(pdf);
+    // console.log(pdf);
   }, [pdf]);
   return (
     <div
