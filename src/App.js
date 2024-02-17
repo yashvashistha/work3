@@ -5,6 +5,7 @@ import HomePage from "./Screens/HomePage";
 import ChatPage from "./Screens/ChatPage";
 import "./App.css";
 import EditPage from "./Screens/EditPage";
+import LoginPage from "./Screens/LoginPage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <div className="ScreenContainer">
           <Topbar />
           <Routes>
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/" exact element={<HomePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/edit/:id" element={<EditPage />} />

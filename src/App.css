@@ -412,18 +412,65 @@ canvas.react-pdf__Page__canvas {
   }
 }
 
-/* .selecttemp {
-  overflow: visible;
-  z-index: 3000;
-  /* text-rendering: auto;
-  letter-spacing: normal;
-  word-spacing: normal;
-  line-height: normal;
-  text-transform: none;
-  text-indent: 0px;
-  text-shadow: none;
-  display: inline-block;
-  text-align: start;
-  appearance: auto;
-  box-sizing: border-box; */
-/* } */
+.Login {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: white;
+}
+
+.Login .Section-1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+  /* background-color: red; */
+}
+
+.Login .Section-2 {
+  /* background-color: rgba(235, 140, 0, 1); */
+  background-color: rgba(247, 132, 22, 1);
+  width: 513px;
+  min-width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .Login div:first-child {
+  width: min(316px, 90%);
+  height: min(174px, 90%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: Helvetica;
+  gap: max(5%, 10px);
+  background-color: red;
+} */
+
+@media (max-width: 655px) {
+  .Login {
+    flex-direction: column;
+  }
+  .Login .Section-1 {
+    width: 100%;
+    height: 40%;
+  }
+  .Login .Section-2 {
+    width: 100%;
+    height: 60%;
+  }
+}
+/* Login Component CSS */
+/**/
+/**/
+/**/
+/**/
+/**/

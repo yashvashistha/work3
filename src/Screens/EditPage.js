@@ -4,24 +4,30 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { useNavigate, useParams } from "react-router-dom";
 import { JSONEditor } from "react-json-editor-viewer";
 
+const apilink =
+  "https://muqo5wd6l2.execute-api.ap-south-1.amazonaws.com/dev/api/v1/files/";
+
 function EditPage() {
   const nav = useNavigate();
   const { id } = useParams();
   const [clicked, setClicked] = useState(false);
   const [dis, setDis] = useState("view");
-  const reuploadapi =
-    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/reupload_json";
+  const [idToken, setIdToken] = useState(localStorage.getItem("idToken") || "");
+  // const reuploadapi =
+  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/reupload_json";
+
   const uploadjsonhandle = async (jsoncontent) => {
     setClicked(!clicked);
-    console.log(typeof jsoncontent);
-    console.log(jsoncontent.data.data);
-    const d = { uniqueid: id, data: jsoncontent.data.data };
+    const d = { uniqueid: id, data: jsoncontent.data.data.data };
     var config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: reuploadapi,
+      url: apilink + id + "/json",
       headers: {
+        Authorization: idToken,
+        customerid: 123456,
         "Content-Type": "application/json",
+        "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
       },
       data: JSON.stringify(d),
     };
@@ -44,6 +50,7 @@ function EditPage() {
         clicked={clicked}
         uploadjsonhandle={uploadjsonhandle}
         dis={dis}
+        idToken={idToken}
       />
       <div
         style={{
@@ -97,7 +104,7 @@ function EditPage() {
   );
 }
 
-function Section2({ id, clicked, uploadjsonhandle, dis }) {
+function Section2({ id, clicked, uploadjsonhandle, dis, idToken }) {
   const styles = {
     dualView: {
       display: "flex",
@@ -179,8 +186,6 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
   const [reload, setReload] = useState(true);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
-  const filedownloadapi =
-    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/download_data?";
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -188,25 +193,25 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
   };
 
   const downloadhandler = async (data) => {
-    const downloadlink =
-      filedownloadapi + "uniqueid=" + data.id + "&type=" + data.type;
+    const downloadlink = apilink + data.id + "/" + data.type;
     try {
       const response = await axios.get(downloadlink, {
         headers: {
-          "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-          "Content-Type": "application/" + data.type,
+          Authorization: idToken,
+          customerid: 123456,
         },
       });
 
       let resultfile;
       if (data.type === "pdf") {
-        const decodestring = atob(response.data.body);
-        const utf8decoder = new TextDecoder("utf-8");
-        resultfile = utf8decoder.decode(
-          new Uint8Array(
-            decodestring.split("").map((char) => char.charCodeAt(0))
-          )
-        );
+        resultfile = response.data;
+        // const decodestring = atob(response.data.body);
+        // const utf8decoder = new TextDecoder("utf-8");
+        // resultfile = utf8decoder.decode(
+        //   new Uint8Array(
+        //     decodestring.split("").map((char) => char.charCodeAt(0))
+        //   )
+        // );
         const blob = new Blob([resultfile], {
           type: "application/" + data.type,
         });
@@ -224,7 +229,7 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
   };
 
   const onJsonChange = (key, value, parent, data) => {
-    jsonFile.data.data = data;
+    jsonFile.data.data.data = data;
     setNewJsonFile(jsonFile);
     setJsonFile(jsonFile);
   };
@@ -385,7 +390,7 @@ function Section2({ id, clicked, uploadjsonhandle, dis }) {
           {loading2 && jsonFile ? (
             <JSONEditor
               collapsible
-              data={jsonFile.data.data}
+              data={jsonFile.data.data.data}
               onChange={onJsonChange}
               styles={styles}
               view="dual"

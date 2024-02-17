@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Topbar() {
+  const nav = useNavigate();
   return (
     <div className="Topbar">
       <div>
@@ -12,7 +14,11 @@ function Topbar() {
         />
       </div>
 
-      <div>
+      <div
+        onClick={() => {
+          nav("/login");
+        }}
+      >
         <img
           src="Icons/adminicon.png"
           alt="admin"

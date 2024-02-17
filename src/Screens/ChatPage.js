@@ -82,7 +82,7 @@ function ChatPage() {
               width: "100%",
               backgroundColor: "rgba(247, 132, 22, 1)",
               display: "flex",
-              justifyContent: "flex-start",
+              justifyContent: "space-between",
               alignItems: "center",
             }}
           >
@@ -97,6 +97,23 @@ function ChatPage() {
             >
               Chat PDF
             </p>
+            <button
+              style={{
+                borderStyle: "none",
+                backgroundColor: "transparent",
+                position: "relative",
+                right: "10px",
+                color: "white",
+                fontSize: "15px",
+                fontWeight: "500",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setBlock(!block);
+              }}
+            >
+              X
+            </button>
           </div>
           <div
             style={{

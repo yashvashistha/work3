@@ -5,21 +5,32 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import ReadChat1 from "./ReadChat1";
 
+const apilink =
+  "https://muqo5wd6l2.execute-api.ap-south-1.amazonaws.com/dev/api/v1/files/";
+
 function HomePage() {
+  const nav = useNavigate();
   const [reload, setReload] = useState(false);
+  const [idToken, setIdToken] = useState(localStorage.getItem("idToken") || "");
+
+  useEffect(() => {
+    if (idToken === "") {
+      nav("/login");
+    }
+  });
   return (
     <div className="Homepage">
       <div style={{ height: "min(100px, 20%)", width: "100%" }}>
         <ReadChat1 />
       </div>
       {/* <div style={{ height: "5%", width: "100%" }}></div> */}
-      <Upload setReload={setReload} reload={reload} />
-      <Tablecontainer setReload={setReload} reload={reload} />
+      <Upload setReload={setReload} reload={reload} idToken={idToken} />
+      <Tablecontainer setReload={setReload} reload={reload} idToken={idToken} />
     </div>
   );
 }
 
-function Upload({ setReload, reload }) {
+function Upload({ setReload, reload, idToken }) {
   const [rotation, setRotation] = useState(0);
   const [selectedoption, setSelectedOption] = useState(null);
   const options = [
@@ -77,8 +88,8 @@ function Upload({ setReload, reload }) {
   };
 
   const fileinputref = useRef(null);
-  const posturl =
-    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
+  // const posturl =
+  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
   const [file, setFile] = useState(null);
   const [block, setBlock] = useState("block");
   const pref = useRef(null);
@@ -125,12 +136,16 @@ function Upload({ setReload, reload }) {
     var config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: posturl,
+      // url: posturl,
+      url: apilink,
       headers: {
-        "Content-Type": file.type,
-        "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+        Authorization: idToken,
+        customerid: 123456,
         filetype: selectedoption.value,
-        customerid: "1",
+        // "Content-Type": file.type,
+        // "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+        // filetype: selectedoption.value,
+        // customerid: "1",
       },
       data: file,
     };
@@ -224,18 +239,18 @@ function Upload({ setReload, reload }) {
   );
 }
 
-function Tablecontainer({ setReload, reload }) {
+function Tablecontainer({ setReload, reload, idToken }) {
   const nav = useNavigate();
   const deleteicon = "Icons/deleteicon.png";
   const pdficon = "Icons/pdficon.png";
   const jsonicon = "Icons/jsonicon.png";
   const editicon = "Icons/editicon.png";
-  const tableapi =
-    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/list_data";
-  const filedownloadapi =
-    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/download_data?";
-  const deletefileapi =
-    "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/delete_data?uniqueid=";
+  // const tableapi =
+  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/list_data";
+  // const filedownloadapi =
+  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/download_data?";
+  // const deletefileapi =
+  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/delete_data?uniqueid=";
   const [tableinfo, setTableInfo] = useState(null);
   const [rowperpage] = useState(20);
   const [rowlen, setRowLen] = useState(1);
@@ -243,11 +258,14 @@ function Tablecontainer({ setReload, reload }) {
   const [loading, setLoading] = useState(true);
 
   const deletehandler = async (id) => {
-    const deletelink = deletefileapi + id;
+    // const deletelink = deletefileapi + id;
+    const deletelink = apilink + id;
     try {
       const response = await axios.delete(deletelink, {
         headers: {
-          "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+          Authorization: idToken,
+          customerid: 123456,
+          // "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
         },
       });
       console.log(response);
@@ -258,25 +276,29 @@ function Tablecontainer({ setReload, reload }) {
   };
 
   const downloadhandler = async (data) => {
-    const downloadlink =
-      filedownloadapi + "uniqueid=" + data.id + "&type=" + data.type;
+    const downloadlink = apilink + data.id + "/" + data.type;
+    // const downloadlink =
+    //   filedownloadapi + "uniqueid=" + data.id + "&type=" + data.type;
     try {
       const response = await axios.get(downloadlink, {
         headers: {
-          "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-          "Content-Type": "application/" + data.type,
+          Authorization: idToken,
+          customerid: 123456,
+          // "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+          // "Content-Type": "application/" + data.type,
         },
       });
 
       let resultfile;
       if (data.type === "pdf") {
-        const decodestring = atob(response.data.body);
-        const utf8decoder = new TextDecoder("utf-8");
-        resultfile = utf8decoder.decode(
-          new Uint8Array(
-            decodestring.split("").map((char) => char.charCodeAt(0))
-          )
-        );
+        resultfile = response.data;
+        // const decodestring = atob(response.data.body);
+        // const utf8decoder = new TextDecoder("utf-8");
+        // resultfile = utf8decoder.decode(
+        //   new Uint8Array(
+        //     decodestring.split("").map((char) => char.charCodeAt(0))
+        //   )
+        // );
       } else if (data.type === "json") {
         resultfile = JSON.stringify(response, null, 2);
       }
@@ -296,10 +318,13 @@ function Tablecontainer({ setReload, reload }) {
 
   const fetchdata = async () => {
     try {
-      const response = await axios.get(tableapi, {
+      const response = await axios.get(apilink, {
         headers: {
+          Authorization: idToken,
+          customerid: 123456,
           "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-          "Content-Type": "application/json",
+          // "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+          // "Content-Type": "application/json",
         },
       });
       setRowLen(response.data.data.length);
