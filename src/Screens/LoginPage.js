@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function LoginPage() {
   const nav = useNavigate();
@@ -23,9 +25,14 @@ function LoginPage() {
       // logindata.eId === "rakesh.ramnani@mobifly.in" &&
       // logindata.pswd === "Rakesh@11"
     ) {
+      toast.success("Welcome to Mobifly!", {
+        progress: 0,
+        progressStyle: { background: "rgba(255, 222, 190, 1)" },
+      });
+
       localStorage.setItem(
         "idToken",
-        "eyJraWQiOiJlNjdLV204TEJESzJQcUpBdUwwUjR2N1E0VmlCb2daaUNzWlRzZVE4NWkwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI5Yjg5OTdkNC1lY2FlLTQ4NjQtOGVjOC1kNWYwZDFhOTFmYTIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmFwLXNvdXRoLTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGgtMV84S3dOaUxnWG4iLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiOmZhbHNlLCJjb2duaXRvOnVzZXJuYW1lIjoiOWI4OTk3ZDQtZWNhZS00ODY0LThlYzgtZDVmMGQxYTkxZmEyIiwiYXVkIjoiZzEzdjE5ZThmNDdwczZucW9lOW1sOXMwZyIsImN1c3RvbTpjdXN0b21lcklkIjoiMTIzNDU2IiwiZXZlbnRfaWQiOiJlMThiZjk0Yi1jM2UwLTRiNjktOGUyZC1lMjU0YTQ5MmZhYTgiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTcwODE2ODAzNCwibmFtZSI6IlJha2VzaFJSTiIsInBob25lX251bWJlciI6Iis5MTk5OTg4NzA3ODQiLCJleHAiOjE3MDgxNzE2MzQsImlhdCI6MTcwODE2ODAzNCwiY3VzdG9tOmVudmlyb25tZW50IjoiZGV2IiwiZW1haWwiOiJyYWtlc2gucmFtbmFuaUBtb2JpZmx5LmluIn0.QLbUbKdkOCqnKvgojMtMgQa-_atwCCqk_nDmLmo9AqPknZU41oC_hajWW8ZzO5Oisu3HpmTXrE7cWCuw-HS8MYg9B_FlnaxNnPRkJVNDcC_C5OVY4VAdnsCsKgx-ek_D5ezduZyLQ_UF0aXGjTvPiTAMcCj5v7Ns4B_z_vuoe2-I1Xq7uh5Wxp49g9aJ5hDoyDr_gW0lsF70z7ItJevdXjqhon4ZpH-frkrJ3F43M22nXameVZqtq7iSt2exnBs73xpTB2frvRApF5Wtop7TGr-g0wWlPwufUv3trDjwZZ2Tit77cOHyoJ7ehLkRcMuQM8qZoLyZqop0OG1b9a1yKQ"
+        "eyJraWQiOiJlNjdLV204TEJESzJQcUpBdUwwUjR2N1E0VmlCb2daaUNzWlRzZVE4NWkwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI5Yjg5OTdkNC1lY2FlLTQ4NjQtOGVjOC1kNWYwZDFhOTFmYTIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmFwLXNvdXRoLTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGgtMV84S3dOaUxnWG4iLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiOmZhbHNlLCJjb2duaXRvOnVzZXJuYW1lIjoiOWI4OTk3ZDQtZWNhZS00ODY0LThlYzgtZDVmMGQxYTkxZmEyIiwiYXVkIjoiZzEzdjE5ZThmNDdwczZucW9lOW1sOXMwZyIsImN1c3RvbTpjdXN0b21lcklkIjoiMTIzNDU2IiwiZXZlbnRfaWQiOiIyN2M1OTEwZC03MDk5LTQ5YjQtODhhZi01YjhjM2M3N2IxZjYiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTcwODM0OTc4MCwibmFtZSI6IlJha2VzaFJSTiIsInBob25lX251bWJlciI6Iis5MTk5OTg4NzA3ODQiLCJleHAiOjE3MDgzNTMzODAsImlhdCI6MTcwODM0OTc4MCwiY3VzdG9tOmVudmlyb25tZW50IjoiZGV2IiwiZW1haWwiOiJyYWtlc2gucmFtbmFuaUBtb2JpZmx5LmluIn0.FDsCnEjeTxOcIjn0klC2gowvrpYjBuLVjp8VIi9tVhZbh-QE96jRYe3DCv1VLvSOoGp9U6bpDnC2E1moM_Hqd8tYRJh-HyVw1qtJp1kf11ycf0H0D-qo3DkJMBvEuIrrCdNR4FhjDwCzEc7v-7-8ojYZarRzNFt3yrxrOyZvaBI6OQvWHMgjLX4NmwEIEYIpIvl8FR5IoEv_3Dx4zGUHft5NA1e7MrHFSULzFqZ57WGthpbVDM5ZIOJ-2JPLoYqpKZmINGyhHsJNcs1Yk3ehKeGg05rUroSCc9dfZdW0_22zpWWpwrotELIgTU4gYdyughnIenDP6ZCewivpoXQUIg"
       );
       nav("/");
 
@@ -49,27 +56,11 @@ function LoginPage() {
       //     console.log(error);
       //   });
     } else {
-      alert("Wrong Id Password");
+      toast.warn("Wrong Id Password!", {
+        progress: 0,
+        progressStyle: { background: "rgba(255, 222, 190, 1)" },
+      });
     }
-    // console.log(JSON.stringify(logindata));
-    // var config = {
-    //   method: "post",
-    //   maxBodyLength: Infinity,
-    //   url: signinurl,
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "x-api-key": "jUlXbxDSESrSJwI3Movt6VYIXfCAEAf1ozsltuWf",
-    //   },
-    //   data: JSON.stringify(logindata),
-    // };
-    // axios
-    //   .request(config)
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   };
   return (
     <div className="Login">

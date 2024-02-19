@@ -4,6 +4,8 @@ import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import ReadChat1 from "./ReadChat1";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const apilink =
   "https://muqo5wd6l2.execute-api.ap-south-1.amazonaws.com/dev/api/v1/files/";
@@ -126,11 +128,17 @@ function Upload({ setReload, reload, idToken }) {
 
   const uploadbtnhandle = async () => {
     if (file === null) {
-      alert("Upload a File");
+      toast.warn("Upload a File!", {
+        progress: 0,
+        progressStyle: { background: "rgba(255, 222, 190, 1)" },
+      });
       return;
     }
     if (file.type !== "application/pdf") {
-      alert("Only PDF Files are allowed");
+      toast.warn("Only PDF Files are allowed!", {
+        progress: 0,
+        progressStyle: { background: "rgba(255, 222, 190, 1)" },
+      });
       return;
     }
     var config = {
@@ -142,10 +150,6 @@ function Upload({ setReload, reload, idToken }) {
         Authorization: idToken,
         customerid: 123456,
         filetype: selectedoption.value,
-        // "Content-Type": file.type,
-        // "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-        // filetype: selectedoption.value,
-        // customerid: "1",
       },
       data: file,
     };
@@ -156,9 +160,16 @@ function Upload({ setReload, reload, idToken }) {
         setBlock("block");
         setReload(!reload);
         setSelectedOption(null);
+        toast.success("PDF Uploaded Successfully!", {
+          progress: 0,
+          progressStyle: { background: "rgba(255, 222, 190, 1)" },
+        });
       })
       .catch((error) => {
-        console.log(error);
+        toast.error(error, {
+          progress: 0,
+          progressStyle: { background: "rgba(255, 222, 190, 1)" },
+        });
       });
   };
   return (

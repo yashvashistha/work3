@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useNavigate, useParams } from "react-router-dom";
 import { JSONEditor } from "react-json-editor-viewer";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const apilink =
   "https://muqo5wd6l2.execute-api.ap-south-1.amazonaws.com/dev/api/v1/files/";
@@ -13,8 +15,6 @@ function EditPage() {
   const [clicked, setClicked] = useState(false);
   const [dis, setDis] = useState("view");
   const [idToken, setIdToken] = useState(localStorage.getItem("idToken") || "");
-  // const reuploadapi =
-  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/reupload_json";
 
   const uploadjsonhandle = async (jsoncontent) => {
     setClicked(!clicked);
@@ -34,13 +34,17 @@ function EditPage() {
     axios
       .request(config)
       .then((response) => {
-        // nav("/");
+        toast.success("JSON Reuploaded Successfully!", {
+          progress: 0,
+          progressStyle: { background: "rgba(255, 222, 190, 1)" },
+        });
         setDis("view");
-        // alert("done");
       })
       .catch((error) => {
-        console.log(error);
-        alert("error");
+        toast.error(error, {
+          progress: 0,
+          progressStyle: { background: "rgba(255, 222, 190, 1)" },
+        });
       });
   };
   return (

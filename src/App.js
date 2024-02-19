@@ -6,7 +6,7 @@ import ChatPage from "./Screens/ChatPage";
 import "./App.css";
 import EditPage from "./Screens/EditPage";
 import LoginPage from "./Screens/LoginPage";
-
+import { Bounce, ToastContainer } from "react-toastify";
 function App() {
   return (
     <div className="App">
@@ -21,6 +21,11 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose="1000"
+        transition={Bounce}
+      />
     </div>
   );
 }

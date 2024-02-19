@@ -443,18 +443,6 @@ canvas.react-pdf__Page__canvas {
   align-items: center;
 }
 
-/* .Login div:first-child {
-  width: min(316px, 90%);
-  height: min(174px, 90%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: Helvetica;
-  gap: max(5%, 10px);
-  background-color: red;
-} */
-
 @media (max-width: 655px) {
   .Login {
     flex-direction: column;

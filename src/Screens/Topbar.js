@@ -16,7 +16,10 @@ function Topbar() {
 
       <div
         onClick={() => {
-          nav("/login");
+          localStorage.removeItem("idToken");
+          setTimeout(() => {
+            nav("/login");
+          }, 600);
         }}
       >
         <img
