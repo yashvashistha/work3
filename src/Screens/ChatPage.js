@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import ReadChat2 from "./ReadChat2";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ChatPage() {
   const fileinputref = useRef(null);
@@ -34,17 +36,27 @@ function ChatPage() {
   };
   const uploadbtnhandle = () => {
     if (tempfile === null) {
-      alert("Upload a File");
+      toast.warn("Upload a File!", {
+        progress: 0,
+        progressStyle: { background: "rgba(217, 57, 84, 1)" },
+      });
       return;
     }
     if (tempfile.type !== "application/pdf") {
-      alert("Only PDF Files are allowed");
+      toast.warn("Only PDF Files are allowed!", {
+        progress: 0,
+        progressStyle: { background: "rgba(217, 57, 84, 1)" },
+      });
       return;
     }
     pref.current.innerText = "";
     setBlock(!block);
     setFile(tempfile);
     setPBlock(!pblock);
+    toast.success("PDF Uploaded Successfully!", {
+      progress: 0,
+      progressStyle: { background: "rgba(217, 57, 84, 1)" },
+    });
   };
   return (
     <div className="Chatpage">
@@ -172,6 +184,7 @@ function Section2({ pdf }) {
   const [pdfFile, setPdfFile] = useState(null);
   const [filename, setFileName] = useState(null);
   const [numPages, setNumPages] = useState();
+  const [pdfwidth, setPdfWidth] = useState(620);
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -208,19 +221,54 @@ function Section2({ pdf }) {
           // overflow: "scroll",
         }}
       >
-        <p
+        <div
           style={{
-            fontFamily: "arial",
-            fontWeight: "500",
-            height: "20px",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          {filename ? (
-            <p>File Name: {filename.slice(0, -4)}</p>
-          ) : (
-            <p>No File Uploaded</p>
-          )}
-        </p>
+          <p
+            style={{
+              fontFamily: "arial",
+              fontWeight: "500",
+              height: "20px",
+            }}
+          >
+            {filename ? (
+              <p>File Name: {filename.slice(0, -4)}</p>
+            ) : (
+              <p>No File Uploaded</p>
+            )}
+          </p>
+          <div
+            style={{
+              width: "15%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <button
+              style={{ width: "30px" }}
+              onClick={() => {
+                setPdfWidth(pdfwidth + 20);
+              }}
+            >
+              +{/* <img src="Icons/zoominicon.png" /> */}
+            </button>
+            <button
+              style={{ width: "30px" }}
+              onClick={() => {
+                setPdfWidth(pdfwidth - 20);
+              }}
+            >
+              -{/* <img src="Icons/zoomouticon.png" /> */}
+            </button>
+          </div>
+        </div>
         <div
           style={{
             overflowY: "auto",
@@ -232,7 +280,7 @@ function Section2({ pdf }) {
           {pdfFile && (
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
               {Array.from({ length: numPages }, (_, index) => (
-                <Page key={index + 1} pageNumber={index + 1} />
+                <Page key={index + 1} pageNumber={index + 1} width={pdfwidth} />
               ))}
             </Document>
           )}

@@ -7,6 +7,7 @@ import "./App.css";
 import EditPage from "./Screens/EditPage";
 import LoginPage from "./Screens/LoginPage";
 import { Bounce, ToastContainer } from "react-toastify";
+
 function App() {
   return (
     <div className="App">
