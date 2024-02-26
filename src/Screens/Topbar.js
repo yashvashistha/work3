@@ -14,14 +14,7 @@ function Topbar() {
         />
       </div>
 
-      <div
-        onClick={() => {
-          localStorage.removeItem("idToken");
-          setTimeout(() => {
-            nav("/login");
-          }, 600);
-        }}
-      >
+      <div>
         <img
           src="Icons/adminicon.png"
           alt="admin"
@@ -29,6 +22,17 @@ function Topbar() {
           width="18px"
         ></img>
         <p>Admin</p>
+        <img
+          src="Icons/logouticon.png"
+          alt=""
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            localStorage.removeItem("idToken");
+            setTimeout(() => {
+              nav("/login");
+            }, 600);
+          }}
+        />
       </div>
     </div>
   );

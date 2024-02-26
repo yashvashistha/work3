@@ -32,7 +32,7 @@ function LoginPage() {
 
       localStorage.setItem(
         "idToken",
-        "eyJraWQiOiJlNjdLV204TEJESzJQcUpBdUwwUjR2N1E0VmlCb2daaUNzWlRzZVE4NWkwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI5Yjg5OTdkNC1lY2FlLTQ4NjQtOGVjOC1kNWYwZDFhOTFmYTIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmFwLXNvdXRoLTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGgtMV84S3dOaUxnWG4iLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiOmZhbHNlLCJjb2duaXRvOnVzZXJuYW1lIjoiOWI4OTk3ZDQtZWNhZS00ODY0LThlYzgtZDVmMGQxYTkxZmEyIiwiYXVkIjoiZzEzdjE5ZThmNDdwczZucW9lOW1sOXMwZyIsImN1c3RvbTpjdXN0b21lcklkIjoiMTIzNDU2IiwiZXZlbnRfaWQiOiI5M2NlOTZjNC01MmE3LTRjMzctYTRmNy0xMWRjNjZkZjg3YTYiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTcwODY2NDI3MSwibmFtZSI6IlJha2VzaFJSTiIsInBob25lX251bWJlciI6Iis5MTk5OTg4NzA3ODQiLCJleHAiOjE3MDg2Njc4NzEsImlhdCI6MTcwODY2NDI3MSwiY3VzdG9tOmVudmlyb25tZW50IjoiZGV2IiwiZW1haWwiOiJyYWtlc2gucmFtbmFuaUBtb2JpZmx5LmluIn0.gSZ-tNEyrI9rT18MNVQ67gguGRGnpGf2DonkAHPVUzITNVeyzvmCyD9jR2_hPNfvF6qIg7ytswshJxw-6XtBswa2rc2bIBceT2Pb2_bhZ3LuJXIsE6aoIqGoU2nrVYjBGv76PxBPKT0uI05Zxi7xd2vWQSwHdJoxLEFSABndfTV-5q59UdOnSEeKZL9CxnsIoBVvwpsytS9OhxYpF81I9kbd1OURRpJUxiJOlhPgUFrPTQEYOIC1vQdtnmg6hk2xzCJMTiwCp9HjoDZVFTf2umJzKN-JqW6XrOlBjLcUVT48qPBilNma3M0KJG-mjfZMGxhZzhjg35PMOSFbuxA_fw"
+        "eyJraWQiOiJlNjdLV204TEJESzJQcUpBdUwwUjR2N1E0VmlCb2daaUNzWlRzZVE4NWkwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI5Yjg5OTdkNC1lY2FlLTQ4NjQtOGVjOC1kNWYwZDFhOTFmYTIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmFwLXNvdXRoLTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGgtMV84S3dOaUxnWG4iLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiOmZhbHNlLCJjb2duaXRvOnVzZXJuYW1lIjoiOWI4OTk3ZDQtZWNhZS00ODY0LThlYzgtZDVmMGQxYTkxZmEyIiwiYXVkIjoiZzEzdjE5ZThmNDdwczZucW9lOW1sOXMwZyIsImN1c3RvbTpjdXN0b21lcklkIjoiMTIzNDU2IiwiZXZlbnRfaWQiOiJkNzY1ZTFlOC1mODgyLTRmMTctODJjNi1mZWVkYWY5YzYyMzkiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTcwODkyMTU2OSwibmFtZSI6IlJha2VzaFJSTiIsInBob25lX251bWJlciI6Iis5MTk5OTg4NzA3ODQiLCJleHAiOjE3MDg5MjUxNjksImlhdCI6MTcwODkyMTU2OSwiY3VzdG9tOmVudmlyb25tZW50IjoiZGV2IiwiZW1haWwiOiJyYWtlc2gucmFtbmFuaUBtb2JpZmx5LmluIn0.BxRKG6_gSGSKjnU6GdEFzRFgyMA23R99DjPvceZD1Bw3VtK8Ihw_yU99yG_qtLg7Ygehz7pp1QBxHBImTMI3gzInsR7twQXNEf5B3fTRT_jROFIXUOYiBpHDP4ckYV1pAQqP2bqLYjxNLA4cTo6UZ3koebNUWeH-8xGrgL_qNn_ti7jnes_dIpr2KD7SDCHbJBmTC-KdurR5Tusmo9GkOQmoJDRhmf2blpsu-spRO14oylrBNge6A0UDD1qyFH45hAtm7ZPmxJ2l4Kt6XctZLg1SVVW0_ED7VvMx_WLTBLFsd31cxW99i93EvdZ7Bb9zv_pb1ZAhH_oN-JpIOh-mGA"
       );
       nav("/");
 
@@ -79,6 +79,8 @@ function LoginPage() {
           }}
         >
           <img
+            width="90%"
+            height="90%"
             src="Icons/largemobiflyicon.png"
             alt="PWC Icon"
             // style={{ flex: 2 }}
@@ -181,6 +183,7 @@ function LoginPage() {
                     fontFamily: "Arial",
                     fontWeight: "700",
                     borderStyle: "none",
+                    cursor: "pointer",
                   }}
                   onClick={handleSubmit}
                 >
@@ -194,6 +197,7 @@ function LoginPage() {
                     lineHeight: "13.8px",
                     // color: "rgba(208, 74, 2, 1)",
                     color: "rgba(247, 132, 22, 1)",
+                    cursor: "default",
                   }}
                 >
                   Get Password
@@ -214,9 +218,9 @@ function LoginPage() {
                   color: "rgba(247, 132, 22, 1)",
                 }}
               >
-                <p>Cookie Information</p>
+                <p style={{ cursor: "default" }}>Cookie Information</p>
                 <hr />
-                <p>Privacy Policy</p>
+                <p style={{ cursor: "default" }}>Privacy Policy</p>
               </div>
             </div>
           </div>

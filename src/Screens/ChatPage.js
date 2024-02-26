@@ -245,27 +245,38 @@ function Section2({ pdf }) {
           </p>
           <div
             style={{
-              width: "15%",
+              width: "80%",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "flex-end",
+              gap: "10px",
             }}
           >
             <button
-              style={{ width: "30px" }}
+              style={{
+                backgroundColor: "transparent",
+                borderStyle: "none",
+              }}
               onClick={() => {
-                setPdfWidth(pdfwidth + 20);
+                setPdfWidth(pdfwidth + 30);
               }}
             >
-              +{/* <img src="Icons/zoominicon.png" /> */}
+              <img
+                src="Icons/zoominicon.png"
+                width="80%"
+                style={{ minWidth: "18px" }}
+              />
             </button>
             <button
-              style={{ width: "30px" }}
+              style={{
+                backgroundColor: "transparent",
+                borderStyle: "none",
+              }}
               onClick={() => {
-                setPdfWidth(pdfwidth - 20);
+                setPdfWidth(pdfwidth - 30);
               }}
             >
-              -{/* <img src="Icons/zoomouticon.png" /> */}
+              <img src="Icons/zoomouticon.png" width="80%" />
             </button>
           </div>
         </div>
