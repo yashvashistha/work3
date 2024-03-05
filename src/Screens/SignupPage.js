@@ -1,119 +1,81 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import APIs from "../Utils/APIfile";
 
-function LoginPage() {
+function SignupPage() {
   const nav = useNavigate();
-  const [getpass, setGetPass] = useState(false);
-  const [logindata, setLoginData] = useState({
+  const signupurl =
+    "https://muqo5wd6l2.execute-api.ap-south-1.amazonaws.com/dev/api/v1/files/user";
+  const [signupdata, setSignupData] = useState({
+    cname: "",
     eId: "",
     pswd: "",
+    cpswd: "",
   });
-  const [email, setEmail] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setLoginData({ ...logindata, [name]: value });
+    setSignupData({ ...signupdata, [name]: value });
   };
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  // Get Password Submit Handler
-  const submitGetPasswordHandler = () => {
-    if (!email) {
-      toast.error("Enter Email!", {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (signupdata.pswd !== signupdata.cpswd) {
+      toast.warn("Password and Confirm Password doesn't match!", {
         progress: 0,
         progressStyle: { background: "rgba(229, 184, 185, 1)" },
       });
       return;
     }
-    const APIdata = JSON.stringify({
-      Email: email,
-    });
-    // console.log(APIdata);
-    const ForgetPasswordapi = APIs.ForgetPasswordAPI;
+
+    const newdata = {
+      Email: signupdata.eId,
+      Pwd: signupdata.pswd,
+      Cname: signupdata.cname,
+    };
+
+    console.log(JSON.stringify(newdata));
+
     var config = {
-      method: ForgetPasswordapi.method,
+      method: "post",
       maxBodyLength: Infinity,
-      url: ForgetPasswordapi.url,
-      headers: ForgetPasswordapi.headers,
-      data: APIdata,
+      url: signupurl,
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
+        Created_by: "admin",
+      },
+      data: JSON.stringify(newdata),
     };
     axios
       .request(config)
       .then((response) => {
-        toast.success("OTP Sent Successfull!", {
+        console.log(response);
+        toast.success("Enter OTP to verify!", {
           progress: 0,
           progressStyle: { background: "rgba(229, 184, 185, 1)" },
         });
-        setGetPass(false);
-        nav(`/setnewpassword/${email}`);
+        nav(`/verify/${signupdata.eId}`);
       })
       .catch((error) => {
-        toast.error("Please Submit Again!", {
-          progress: 0,
-          progressStyle: { background: "rgba(229, 184, 185, 1)" },
-        });
-      });
-  };
-
-  //Login submit handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (true) {
-      toast.success("Welcome to Mobifly!", {
-        progress: 0,
-        progressStyle: { background: "rgba(255, 222, 190, 1)" },
+        console.log(error);
       });
 
-      localStorage.setItem("idToken", logindata.pswd);
-      nav("/");
-    } else {
-      toast.warn("Wrong Id Password!", {
-        progress: 0,
-        progressStyle: { background: "rgba(255, 222, 190, 1)" },
-      });
-    }
-
-    // const APIdata = JSON.stringify(logindata);
-    // console.log(APIdata);
-    // const Loginapi = APIs.LoginAPI;
-    // var config = {
-    //   method: Loginapi.method,
-    //   maxBodyLength: Infinity,
-    //   url: Loginapi.url,
-    //   headers: Loginapi.headers,
-    //   data: APIdata,
-    // };
-    // axios
-    //   .request(config)
-    //   .then((response) => {
-    //     toast.success("Welcome to Mobifly!", {
-    //       progress: 0,
-    //       progressStyle: { background: "rgba(255, 222, 190, 1)" },
-    //     });
-    //     localStorage.setItem("idToken", response.idToken);
-    //     nav("/");
-    //   })
-    //   .catch((error) => {
-    //     toast.warn("Wrong Id Password!", {
-    //       progress: 0,
-    //       progressStyle: { background: "rgba(255, 222, 190, 1)" },
-    //     });
+    // if (true) {
+    //   toast.success("Enter OTP to verify!", {
+    //     progress: 0,
+    //     progressStyle: { background: "rgba(229, 184, 185, 1)" },
     //   });
+    //   nav("/verify");
+    // }
   };
-
   return (
     <div className="Login">
       <div className="Section-1">
         <div
           style={{
-            // backgroundColor: "yellow",
             width: "min(316px, 90%)",
             height: "min(174px, 90%)",
             display: "flex",
@@ -129,7 +91,6 @@ function LoginPage() {
             height="50%"
             src="/Icons/largemobiflyicon.png"
             alt="Mobifly Icon"
-            // style={{ flex: 2 }}
           />
           <p>Navigate PDF Parser</p>
           <p>Effective. Comprehensive. Flexible</p>
@@ -140,23 +101,22 @@ function LoginPage() {
           style={{
             maxWidth: "445px",
             width: "95%",
-            maxHeight: "366px",
+            maxHeight: "450px",
             height: "90%",
             backgroundColor: "white",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            // backgroundColor: "yellow",
           }}
         >
           <div
             style={{
               maxWidth: "383px",
               width: "95%",
-              maxHeight: "277px",
+              //   maxHeight: "277px",
               height: "90%",
-              // backgroundColor: "yellow",
+              //   backgroundColor: "yellow",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -166,6 +126,7 @@ function LoginPage() {
               style={{
                 display: "flex",
                 flexDirection: "row",
+                // width: "62px",
                 height: "18px",
                 width: "90%",
                 justifyContent: "space-between",
@@ -180,6 +141,7 @@ function LoginPage() {
                 }}
                 onClick={() => {
                   // Login Component
+                  nav("/login");
                 }}
               >
                 <img
@@ -217,18 +179,30 @@ function LoginPage() {
             <div
               style={{
                 width: "100%",
-                maxHeight: "226px",
+                maxHeight: "452px",
                 height: "90%",
+                // backgroundColor: "lightblue",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
               }}
             >
               <input
-                type="username"
-                placeholder="  Leave Empty"
+                type="companyname"
+                placeholder="  Company Name"
+                name="cname"
+                value={signupdata.cname}
+                onChange={handleInputChange}
+                style={{
+                  height: "50px",
+                  border: "1px solid black",
+                }}
+              />
+              <input
+                type="email"
+                placeholder="  Username"
                 name="eId"
-                value={logindata.Username}
+                value={signupdata.eId}
                 onChange={handleInputChange}
                 style={{
                   height: "50px",
@@ -237,9 +211,20 @@ function LoginPage() {
               />
               <input
                 type="text"
-                placeholder="  Enter IdToken"
+                placeholder="  Password"
                 name="pswd"
-                value={logindata.Password}
+                value={signupdata.pswd}
+                onChange={handleInputChange}
+                style={{
+                  height: "50px",
+                  border: "1px solid black",
+                }}
+              />
+              <input
+                type="text"
+                placeholder="  Confirm Password"
+                name="cpswd"
+                value={signupdata.cpswd}
                 onChange={handleInputChange}
                 style={{
                   height: "50px",
@@ -270,24 +255,8 @@ function LoginPage() {
                   }}
                   onClick={handleSubmit}
                 >
-                  Login
+                  Signup
                 </button>
-                <p
-                  style={{
-                    fontFamily: "Arial",
-                    fontWeight: "700",
-                    fontSize: "12px",
-                    lineHeight: "13.8px",
-                    color: "rgba(247, 132, 22, 1)",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    setGetPass(true);
-                    // nav("/forgetpassword");
-                  }}
-                >
-                  Get Password
-                </p>
               </div>
               <div
                 style={{
@@ -300,6 +269,7 @@ function LoginPage() {
                   fontFamily: "Arial",
                   fontWeight: "400",
                   lineHeight: "12.65px",
+                  // color: "rgba(208, 74, 2, 1)",
                   color: "rgba(247, 132, 22, 1)",
                 }}
               >
@@ -311,90 +281,8 @@ function LoginPage() {
           </div>
         </div>
       </div>
-      {/* Hidden Get Password Component */}
-      <div
-        className="popup-container"
-        style={{
-          display: getpass ? "flex" : "none",
-          width: "383px",
-          height: "230px",
-          minHeight: "30%",
-          minWidth: "35%",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <div
-          style={{
-            height: "10%",
-            width: "100%",
-            minHeight: "35px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(247, 132, 22, 1)",
-          }}
-        >
-          <p>Get Password</p>
-          <button
-            style={{
-              position: "absolute",
-              right: "5px",
-              backgroundColor: "transparent",
-              borderStyle: "none",
-              top: "5px",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              setGetPass(false);
-            }}
-          >
-            X
-          </button>
-        </div>
-        <div
-          style={{
-            width: "100%",
-            height: "90%",
-            display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <input
-            type="username"
-            placeholder="  Username"
-            name="eId"
-            value={email}
-            onChange={handleEmailChange}
-            style={{
-              width: "90%",
-              height: "50px",
-              border: "1px solid black",
-            }}
-          />
-          <button
-            style={{
-              width: "108px",
-              height: "36px",
-              backgroundColor: "rgba(247, 132, 22, 1)",
-              color: "white",
-              fontSize: "16px",
-              fontFamily: "Arial",
-              fontWeight: "700",
-              borderStyle: "none",
-              cursor: "pointer",
-            }}
-            onClick={submitGetPasswordHandler}
-          >
-            Get OTP
-          </button>
-        </div>
-      </div>
-      {/* Hidden Get Password Component */}
     </div>
   );
 }
 
-export default LoginPage;
+export default SignupPage;

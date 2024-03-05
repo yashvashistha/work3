@@ -7,7 +7,7 @@ function Topbar() {
     <div className="Topbar">
       <div>
         <img
-          src="Icons/mobiflyicon.png"
+          src="/Icons/mobiflyicon.png"
           alt="Mobifly Icon"
           height="30px"
           width="78px"
@@ -16,14 +16,14 @@ function Topbar() {
 
       <div>
         <img
-          src="Icons/adminicon.png"
+          src="/Icons/adminicon.png"
           alt="admin"
           height="18px"
           width="18px"
         ></img>
         <p>Admin</p>
         <img
-          src="Icons/logouticon.png"
+          src="/Icons/logouticon.png"
           alt=""
           style={{ cursor: "pointer" }}
           onClick={() => {

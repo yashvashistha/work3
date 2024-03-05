@@ -7,6 +7,10 @@ import "./App.css";
 import EditPage from "./Screens/EditPage";
 import LoginPage from "./Screens/LoginPage";
 import { Bounce, ToastContainer } from "react-toastify";
+import SignupPage from "./Screens/SignupPage";
+import OTPScreen from "./Screens/OTPScreen";
+import RoughScreen from "./Screens/RoughScreen";
+import ForgetPassword from "./Screens/ForgetPassword";
 
 function App() {
   return (
@@ -15,10 +19,14 @@ function App() {
         <div className="ScreenContainer">
           <Topbar />
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/rough" element={<RoughScreen />} />
             <Route path="/" exact element={<HomePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/edit/:id" element={<EditPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/verify/:email" element={<OTPScreen />} />
+            <Route path="/setnewpassword/:email" element={<ForgetPassword />} />
           </Routes>
         </div>
       </BrowserRouter>

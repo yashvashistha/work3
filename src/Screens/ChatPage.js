@@ -3,6 +3,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import ReadChat2 from "./ReadChat2";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Pagination from "./Pagination";
 
 function ChatPage() {
   const fileinputref = useRef(null);
@@ -12,6 +13,27 @@ function ChatPage() {
   const [pblock, setPBlock] = useState(false);
   const pref = useRef(null);
   const uploadicon = "Icons/uploadicon.png";
+  const [nblock, setNBlock] = useState("block");
+  const [warnmsg2, setWarnMsg2] = useState(false);
+
+  const [rowperpage] = useState(1);
+  const [rowlen, setRowLen] = useState(1);
+  const [currentpage, setCurrentPage] = useState(1);
+
+  const indexoflastrow = currentpage * rowperpage;
+  const indexoffirstrow = indexoflastrow - rowperpage;
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const clearfilehandler = () => {
+    pref.current.innerText = "";
+    setNBlock("block");
+    setPBlock("block");
+    setFile(null);
+    setWarnMsg2(false);
+    // setWarnMsg2(false);
+  };
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -29,13 +51,18 @@ function ChatPage() {
   const uploadhandler = (file) => {
     setTempFile(file);
     setPBlock("none");
+    setNBlock("none");
     pref.current.innerText = file.name;
   };
   const hiddenuploadhandler = async (e) => {
-    uploadhandler(e.target.files[0]);
+    e.preventDefault();
+    const selectedFile = e.target.files[0];
+    fileinputref.current.value = "";
+    uploadhandler(selectedFile);
   };
   const uploadbtnhandle = () => {
     if (tempfile === null) {
+      setWarnMsg2(true);
       toast.warn("Upload a File!", {
         progress: 0,
         progressStyle: { background: "rgba(217, 57, 84, 1)" },
@@ -53,14 +80,15 @@ function ChatPage() {
     setBlock(!block);
     setFile(tempfile);
     setPBlock(!pblock);
+    setNBlock("block");
     toast.success("PDF Uploaded Successfully!", {
       progress: 0,
       progressStyle: { background: "rgba(217, 57, 84, 1)" },
     });
   };
   return (
-    <div className="Chatpage">
-      <div className="Section1">
+    <div className="Chatpage" style={{ overflow: "visible" }}>
+      <div className="Section1" style={{ overflow: "visible" }}>
         <div
           style={{
             width: "100%",
@@ -86,6 +114,7 @@ function ChatPage() {
             display: block ? "flex" : "none",
             flexDirection: "column",
             zIndex: "2",
+            overflow: "visible",
           }}
         >
           <div
@@ -135,6 +164,7 @@ function ChatPage() {
               alignItems: "center",
               width: "100%",
               height: "100%",
+              overflow: "visible",
             }}
           >
             <div
@@ -142,9 +172,39 @@ function ChatPage() {
               onDragEnter={handleDragEnter}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-              style={{ width: "60%" }}
+              style={{
+                width: "60%",
+                position: "relative",
+                overflow: "visible",
+              }}
             >
-              <p ref={pref}></p>
+              <p
+                style={{
+                  display: nblock == "block" ? "none" : "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
+              >
+                <p ref={pref}></p>
+                <button
+                  title="Clear the Upload File"
+                  style={{
+                    display: nblock == "block" ? "none" : "flex",
+                    borderStyle: "none",
+                    backgroundColor: "white",
+                    color: "black",
+                    fontSize: "15px",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    position: "absolute",
+                    right: "5px",
+                    top: "5px",
+                  }}
+                  onClick={clearfilehandler}
+                >
+                  X
+                </button>
+              </p>
               <p style={{ width: "100%", display: pblock }}>
                 <img
                   src={uploadicon}
@@ -161,6 +221,49 @@ function ChatPage() {
                   Browse File
                 </span>
               </p>
+              {warnmsg2 && (!warnmsg2 || file == null) ? (
+                <div
+                  className="pointed-border"
+                  style={{
+                    fontSize: "110%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    minHeight: "max-content",
+                    height: "50%",
+                  }}
+                >
+                  <p style={{ width: "80%", textWrap: "wrap" }}>
+                    Please upload one file!
+                  </p>
+                  <button
+                    style={{
+                      borderStyle: "none",
+                      backgroundColor: "transparent",
+                      position: "absolute",
+                      right: "10px",
+                      fontSize: "15px",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setWarnMsg2(!warnmsg2);
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              ) : (
+                // <div
+                //   className="pointed-border"
+                //   style={{
+                //     fontSize: "110%",
+                //     zIndex: "999",
+                //   }}
+                // >
+                //   Please upload one file!
+                // </div>
+                <></>
+              )}
             </div>
             <div className="Upload-btn" onClick={uploadbtnhandle}>
               <p style={{ margin: "0px" }}>Upload</p>
@@ -175,12 +278,32 @@ function ChatPage() {
         />
         {/* Hidden file input to here  */}
       </div>
-      <Section2 pdf={file} />
+      <Section2
+        pdf={file}
+        setRowLen={setRowLen}
+        indexoffirstrow={indexoffirstrow}
+        indexoflastrow={indexoflastrow}
+      />
+      <Pagination
+        postsPerPage={rowperpage}
+        totalPosts={rowlen}
+        currentpage={currentpage}
+        paginate={paginate}
+        cssstyle={{
+          width: "42%",
+          height: "7%",
+          position: "relative",
+          left: "8%",
+          justifyContent: "space-between",
+          alignSelf: "flex-start",
+        }}
+        text={`Page ${indexoffirstrow + 1} / ${rowlen}`}
+      />
     </div>
   );
 }
 
-function Section2({ pdf }) {
+function Section2({ pdf, setRowLen, indexoffirstrow, indexoflastrow }) {
   const [pdfFile, setPdfFile] = useState(null);
   const [filename, setFileName] = useState(null);
   const [numPages, setNumPages] = useState();
@@ -188,8 +311,8 @@ function Section2({ pdf }) {
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
   const onDocumentLoadSuccess = ({ numPages }) => {
-    console.log(numPages);
     setNumPages(numPages);
+    setRowLen(numPages);
   };
 
   useEffect(() => {
@@ -197,9 +320,8 @@ function Section2({ pdf }) {
       setPdfFile(pdf);
       setFileName(pdf.name);
     }
-    // console.log(reload);
-    // console.log(pdf);
   }, [pdf]);
+
   return (
     <div
       style={{
@@ -290,9 +412,15 @@ function Section2({ pdf }) {
         >
           {pdfFile && (
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
-              {Array.from({ length: numPages }, (_, index) => (
-                <Page key={index + 1} pageNumber={index + 1} width={pdfwidth} />
-              ))}
+              {Array.from({ length: numPages })
+                .slice(indexoffirstrow, indexoflastrow)
+                .map((_, index) => (
+                  <Page
+                    key={index + indexoffirstrow + 1}
+                    pageNumber={index + indexoffirstrow + 1}
+                    width={pdfwidth}
+                  />
+                ))}
             </Document>
           )}
         </div>

@@ -90,12 +90,12 @@ function Upload({ setReload, reload, idToken }) {
   };
 
   const fileinputref = useRef(null);
-  // const posturl =
-  //   "https://pyrtqap426.execute-api.ap-south-1.amazonaws.com/navigate-pdf-parser/upload_pdf";
   const [file, setFile] = useState(null);
   const [block, setBlock] = useState("block");
   const pref = useRef(null);
-  const uploadicon = "Icons/uploadicon.png";
+  const uploadicon = "/Icons/uploadicon.png";
+  const [warnmsg1, setWarnMsg1] = useState(false);
+  const [warnmsg2, setWarnMsg2] = useState(false);
 
   const rotateImage = () => {
     setRotation(rotation + 360);
@@ -117,18 +117,33 @@ function Upload({ setReload, reload, idToken }) {
   const hiddenuploadhandler = (e) => {
     e.preventDefault();
     const selectedFile = e.target.files[0];
+    fileinputref.current.value = "";
     uploadhandler(selectedFile);
   };
   const uploadhandler = (file) => {
-    console.log(file);
     pref.current.innerText = file.name;
     setBlock("none");
     setFile(file);
   };
+  const clearfilehandler = () => {
+    pref.current.innerText = "";
+    setBlock("block");
+    setFile(null);
+    setWarnMsg2(false);
+  };
 
   const uploadbtnhandle = async () => {
     if (file === null) {
-      toast.warn("Upload a File!", {
+      setWarnMsg2(true);
+      toast.warn("Please upload one file!", {
+        progress: 0,
+        progressStyle: { background: "rgba(255, 222, 190, 1)" },
+      });
+      return;
+    }
+    if (selectedoption === null) {
+      setWarnMsg1(true);
+      toast.warn("Please select one file type!", {
         progress: 0,
         progressStyle: { background: "rgba(255, 222, 190, 1)" },
       });
@@ -141,10 +156,19 @@ function Upload({ setReload, reload, idToken }) {
       });
       return;
     }
+
+    // pref.current.innerText = "";
+    // setBlock("block");
+    // setReload(!reload);
+    // setSelectedOption(null);
+    // setWarnMsg1(false);
+    // setWarnMsg2(false);
+    // alert("Done");
+    // setFile(null);
+
     var config = {
       method: "post",
       maxBodyLength: Infinity,
-      // url: posturl,
       url: apilink,
       headers: {
         Authorization: idToken,
@@ -160,6 +184,9 @@ function Upload({ setReload, reload, idToken }) {
         setBlock("block");
         setReload(!reload);
         setSelectedOption(null);
+        setWarnMsg1(false);
+        setWarnMsg2(false);
+        setFile(null);
         toast.success("PDF Uploaded Successfully!", {
           progress: 0,
           progressStyle: { background: "rgba(255, 222, 190, 1)" },
@@ -176,25 +203,93 @@ function Upload({ setReload, reload, idToken }) {
     <div className="Upload-Maindiv">
       <p>Upload File</p>
       <div className="Upload-Subdiv">
-        <div style={{ width: "max(15%, 200px)", overflow: "visible" }}>
+        <div
+          style={{
+            width: "max(15%, 200px)",
+            overflow: "visible",
+            position: "relative",
+          }}
+        >
           <Select
             className="Upload-select"
             options={options}
             value={selectedoption}
             onChange={handleChange}
             placeholder={
-              selectedoption == null ? "Select Method" : selectedoption.label
+              selectedoption == null ? "Select File Type" : selectedoption.label
             }
             styles={customStyles}
           />
+          {warnmsg1 && (!warnmsg1 || selectedoption == null) ? (
+            <div
+              className="pointed-border"
+              style={{
+                fontSize: "110%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                minHeight: "max-content",
+                height: "100%",
+              }}
+            >
+              <p style={{ width: "80%", height: "100%" }}>
+                Please select one file type!
+              </p>
+              <button
+                style={{
+                  borderStyle: "none",
+                  backgroundColor: "transparent",
+                  position: "absolute",
+                  right: "10px",
+                  fontSize: "15px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setWarnMsg1(!warnmsg1);
+                }}
+              >
+                X
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
         <div
           className="DragDrop"
           onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
+          style={{ overflow: "visible", position: "relative" }}
         >
-          <p ref={pref}></p>
+          <p
+            style={{
+              display: block == "block" ? "none" : "flex",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <p ref={pref}></p>
+            <button
+              title="Clear the Upload File"
+              style={{
+                display: block == "block" ? "none" : "block",
+                borderStyle: "none",
+                backgroundColor: "white",
+                color: "black",
+                fontSize: "15px",
+                fontWeight: "500",
+                cursor: "pointer",
+                position: "absolute",
+                right: "5px",
+                top: "5px",
+              }}
+              onClick={clearfilehandler}
+            >
+              X
+            </button>
+          </p>
           <p style={{ width: "100%", display: block }}>
             <img
               src={uploadicon}
@@ -211,6 +306,40 @@ function Upload({ setReload, reload, idToken }) {
               Browse File
             </span>
           </p>
+          {warnmsg2 && (!warnmsg2 || file == null) ? (
+            <div
+              className="pointed-border"
+              style={{
+                fontSize: "110%",
+                display: "flex",
+                justifyContent: "space-between",
+                minHeight: "max-content",
+                height: "50%",
+              }}
+            >
+              <p style={{ width: "80%", textWrap: "wrap" }}>
+                Please upload one file!
+              </p>
+              <button
+                style={{
+                  borderStyle: "none",
+                  backgroundColor: "transparent",
+                  position: "absolute",
+                  right: "10px",
+                  fontSize: "15px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setWarnMsg2(!warnmsg2);
+                }}
+              >
+                X
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
         {/* Hidden file input from here */}
         <input
@@ -334,8 +463,6 @@ function Tablecontainer({ setReload, reload, idToken }) {
           Authorization: idToken,
           customerid: 123456,
           "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-          // "x-api-key": "doVk3aPq1i8Y5UPpnw3OO4a610LK2yFrahOpYEo0",
-          // "Content-Type": "application/json",
         },
       });
       setRowLen(response.data.data.length);
@@ -354,7 +481,7 @@ function Tablecontainer({ setReload, reload, idToken }) {
   const indexoflastrow = currentpage * rowperpage;
   const indexoffirstrow = indexoflastrow - rowperpage;
   const paginate = (pageNumber) => {
-    console.log(indexoffirstrow, indexoflastrow);
+    // console.log(indexoffirstrow, indexoflastrow);
     setCurrentPage(pageNumber);
   };
 
@@ -457,9 +584,10 @@ function Tablecontainer({ setReload, reload, idToken }) {
         postsPerPage={rowperpage}
         totalPosts={rowlen}
         currentpage={currentpage}
-        indexoffirstrow={indexoffirstrow}
-        indexoflastrow={indexoflastrow}
         paginate={paginate}
+        text={`Showing ${indexoffirstrow + 1} to ${" "}
+        ${indexoflastrow > rowlen ? rowlen : indexoflastrow} of total ${" "}
+        ${rowlen} entries`}
       />
     </div>
   );

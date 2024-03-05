@@ -4,9 +4,9 @@ export default function Pagination({
   postsPerPage,
   totalPosts,
   currentpage,
-  indexoffirstrow,
-  indexoflastrow,
   paginate,
+  cssstyle,
+  text,
 }) {
   const checkfunc = (selectedpage) => {
     if (
@@ -17,13 +17,17 @@ export default function Pagination({
     }
   };
   return (
-    <div className="Pagination">
-      <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
-        <p style={{ textWrap: "wrap" }}>
-          Showing {indexoffirstrow + 1} to{" "}
-          {indexoflastrow > totalPosts ? totalPosts : indexoflastrow} of total{" "}
-          {totalPosts} entries
-        </p>
+    <div className="Pagination" style={cssstyle}>
+      <div
+        style={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <p style={{ textWrap: "wrap" }}>{text}</p>
       </div>
       <div className="paginationbtn">
         <div

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { JSONEditor } from "react-json-editor-viewer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Pagination from "./Pagination";
 
 const apilink =
   "https://muqo5wd6l2.execute-api.ap-south-1.amazonaws.com/dev/api/v1/files/";
@@ -15,6 +16,16 @@ function EditPage() {
   const [clicked, setClicked] = useState(false);
   const [dis, setDis] = useState("view");
   const [idToken, setIdToken] = useState(localStorage.getItem("idToken") || "");
+
+  const [rowperpage] = useState(1);
+  const [rowlen, setRowLen] = useState(1);
+  const [currentpage, setCurrentPage] = useState(1);
+
+  const indexoflastrow = currentpage * rowperpage;
+  const indexoffirstrow = indexoflastrow - rowperpage;
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   const uploadjsonhandle = async (jsoncontent) => {
     setClicked(!clicked);
@@ -55,6 +66,9 @@ function EditPage() {
         uploadjsonhandle={uploadjsonhandle}
         dis={dis}
         idToken={idToken}
+        setRowLen={setRowLen}
+        indexoffirstrow={indexoffirstrow}
+        indexoflastrow={indexoflastrow}
       />
       <div
         style={{
@@ -67,6 +81,20 @@ function EditPage() {
           marginTop: "1%",
         }}
       >
+        <Pagination
+          postsPerPage={rowperpage}
+          totalPosts={rowlen}
+          currentpage={currentpage}
+          paginate={paginate}
+          cssstyle={{
+            height: "100%",
+            position: "relative",
+            left: "0px",
+            justifyContent: "flex-start",
+            gap: "5%",
+          }}
+          text={`Page ${indexoffirstrow + 1} / ${rowlen}`}
+        />
         <button
           className="Upload-btn"
           style={{
@@ -108,7 +136,16 @@ function EditPage() {
   );
 }
 
-function Section2({ id, clicked, uploadjsonhandle, dis, idToken }) {
+function Section2({
+  id,
+  clicked,
+  uploadjsonhandle,
+  dis,
+  idToken,
+  setRowLen,
+  indexoffirstrow,
+  indexoflastrow,
+}) {
   const styles = {
     dualView: {
       display: "flex",
@@ -194,6 +231,7 @@ function Section2({ id, clicked, uploadjsonhandle, dis, idToken }) {
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
+    setRowLen(numPages);
   };
 
   const downloadhandler = async (data) => {
@@ -274,49 +312,55 @@ function Section2({ id, clicked, uploadjsonhandle, dis, idToken }) {
       >
         <div
           style={{
+            width: "100%",
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            width: "90%",
+            alignItems: "center",
             height: "5%",
           }}
         >
           <p
             style={{
-              alignSelf: "flex-start",
               fontFamily: "arial",
               fontWeight: "600",
               height: "20px",
-              display: "flex",
-              alignItems: "center",
-              height: "100%",
             }}
           >
             PDF File
           </p>
           <div
             style={{
-              width: "15%",
+              width: "80%",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "flex-end",
+              gap: "10px",
             }}
           >
             <button
-              style={{ width: "30px" }}
+              style={{
+                backgroundColor: "transparent",
+                borderStyle: "none",
+                cursor: "pointer",
+              }}
               onClick={() => {
-                setPdfWidth(pdfwidth + 20);
+                setPdfWidth(pdfwidth + 30);
               }}
             >
-              +{/* <img src="Icons/zoominicon.png" /> */}
+              <img src="/Icons/zoominicon.png" width="80%" />
             </button>
             <button
-              style={{ width: "30px" }}
+              style={{
+                backgroundColor: "transparent",
+                borderStyle: "none",
+                cursor: "pointer",
+              }}
               onClick={() => {
-                setPdfWidth(pdfwidth - 20);
+                setPdfWidth(pdfwidth - 30);
               }}
             >
-              -{/* <img src="Icons/zoomouticon.png" /> */}
+              <img src="/Icons/zoomouticon.png" width="80%" />
             </button>
           </div>
         </div>
@@ -332,9 +376,15 @@ function Section2({ id, clicked, uploadjsonhandle, dis, idToken }) {
         >
           {loading1 && pdfFile ? (
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
-              {Array.from({ length: numPages }, (_, index) => (
-                <Page key={index + 1} pageNumber={index + 1} width={pdfwidth} />
-              ))}
+              {Array.from({ length: numPages })
+                .slice(indexoffirstrow, indexoflastrow)
+                .map((_, index) => (
+                  <Page
+                    key={index + indexoffirstrow + 1}
+                    pageNumber={index + indexoffirstrow + 1}
+                    width={pdfwidth}
+                  />
+                ))}
             </Document>
           ) : (
             <div>Loading...</div>
